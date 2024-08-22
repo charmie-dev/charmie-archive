@@ -1,0 +1,13 @@
+# Output folder
+
+dist
+
+# Node modules
+node_modules
+
+# Environment variables
+.env
+
+# Main configuration file
+
+charmie.cfg.yml

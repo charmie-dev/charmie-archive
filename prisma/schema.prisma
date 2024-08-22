@@ -1,0 +1,42 @@
+// Prisma schema file for storing data models
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InfractionType {
+  Warn
+  Mute
+  Kick
+  Ban
+  Unmute
+  Unban
+}
+
+model Guilds {
+  id String @id
+
+  // JSON object for storing configuration data for the guild
+  config Json
+
+  // Relation: Represents the guild's infractions
+  infractions Infractions[]
+}
+
+model Infractions {
+  id          Int            @id @unique @default(autoincrement())
+  guildId     String
+  userId      String
+  moderatorId String
+  type        InfractionType
+  reason      String         @default("Unspecified.")
+  createdAt   BigInt
+  expiresAt   BigInt?
+  auto        Boolean        @default(false)
+
+  guild Guilds @relation(fields: [guildId], references: [id])
+}
