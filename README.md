@@ -16,5 +16,5 @@ developers: ['{dev id}']
 # ❗ Important
 This repository contains the bare minimum code for running charmie and it's new infrastructure. It is by no means in a production state and will remain like this until completely finished.
 ## Aditional Information
-If given access, it is absolutely forbidden to share the code inside of this repository with anyone else unless it has ben open sourced.
+If given access, it is absolutely forbidden to share the code inside of this repository with anyone else unless it has been open sourced.
 Failure to comply with rule will result in your view permissions being revoked.
