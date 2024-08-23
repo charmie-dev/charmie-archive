@@ -54,6 +54,6 @@ Failure to comply with rule will result in your view permissions being revoked.
 
 This bot was created & maintained by [redicides](https://github.com/redicides). However, it is inspired by multiple other bots and contains code from some of them. The credits for these bots are listed below.
 
-## [Azalea Moderation Bot](https://github.com/Rodis-Infrastructure/Azalea)
+## [[RoDis Infrastructure] Azalea](https://github.com/Rodis-Infrastructure/Azalea)
 
 - The configuration system, message caching system, cron management system, a number of schematics for zod, design elements, as well as a number of utility functions & classes from Azalea are used in Charmie.
