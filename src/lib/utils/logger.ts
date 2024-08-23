@@ -1,9 +1,17 @@
+/**
+ * The color options for the logger.
+ */
+
 interface ColorOptions {
   // ANSI color code
   color?: AnsiColor;
   // Whether to color the full log or just the level
   full?: boolean;
 }
+
+/**
+ * The supported  ANSI color codes.
+ */
 
 export enum AnsiColor {
   Purple = '\x1b[35m',
@@ -15,6 +23,12 @@ export enum AnsiColor {
   Grey = '\x1b[90m',
   Red = '\x1b[31m'
 }
+
+/**
+ * The logger class for Charmie.
+ *
+ * Full credits for this class go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
+ */
 
 export default class Logger {
   static log(level: string, message: string, options?: ColorOptions): void {

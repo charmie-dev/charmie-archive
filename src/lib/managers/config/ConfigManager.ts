@@ -12,6 +12,8 @@ import GuildCache from '../cache/GuildCache';
  *
  * Used to parse JSON configuration data from the {Guilds} prisma model,
  * and to cache the global configuration.
+ *
+ * Full credits for this system go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
  */
 
 export default class ConfigManager {

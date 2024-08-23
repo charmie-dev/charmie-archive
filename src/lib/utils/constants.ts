@@ -2,6 +2,13 @@ import { GatewayIntentBits, GuildMember, Options, Partials, Sweepers } from 'dis
 
 import { GuildConfig } from '../managers/config/schema';
 
+/**
+ * This file contains all the constants used throughout the bot.
+ *
+ * Credits for some of the constants here go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
+ * As well as credits for the overall naming structure for the exported constants.
+ */
+
 // ————————————————————————————————————————————————————————————————————————————————
 // Client configuration
 // ————————————————————————————————————————————————————————————————————————————————

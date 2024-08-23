@@ -10,6 +10,8 @@ import { terminateDbConnection } from '.';
 
 /**
  * The class responsible for handling/managing cron utilities.
+ *
+ * Full credits for this system go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
  */
 
 export default class CronUtils {

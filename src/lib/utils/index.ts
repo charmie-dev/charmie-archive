@@ -20,6 +20,12 @@ import { container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
 /**
+ * This file contains utility functions that are used throughout the bot.
+ *
+ * Credits for a most of these functions go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
+ */
+
+/**
  * Reads a YAML file from the given path and returns the parsed content.
  *
  * @param path - The path to the YAML file.

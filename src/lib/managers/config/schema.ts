@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+/**
+ * The various schemas used for validation.
+ *
+ * Inspiration credits for this system go to {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
+ * As well as credits for the global config schema.
+ */
+
 // ————————————————————————————————————————————————————————————————————————————————
 // Miscellaneous
 // ————————————————————————————————————————————————————————————————————————————————

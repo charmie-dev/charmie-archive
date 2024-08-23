@@ -14,6 +14,8 @@ import CronUtils from '../../utils/cron';
  *
  * This class is used to cache messages for a period of time before deleting them.
  * The configured time depends on the `charmie.cfg.yml` file.
+ *
+ * Full credits for this system go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
  */
 export default class MessageCache {
   /**
