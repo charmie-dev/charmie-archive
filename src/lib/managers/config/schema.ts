@@ -4,6 +4,11 @@ import { z } from 'zod';
 // Miscellaneous
 // ————————————————————————————————————————————————————————————————————————————————
 
+const zCron = z
+  .string()
+  .regex(
+    /^(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|([\d*]+[/-]\d+)|\d+|\*) ?){5,7})$/gm
+  );
 const zSnowflake = z.string().regex(/^\d{17,19}$/gm);
 
 // ————————————————————————————————————————————————————————————————————————————————
@@ -13,8 +18,16 @@ const zSnowflake = z.string().regex(/^\d{17,19}$/gm);
 // Global configuration schema exported for validation
 
 export const globalConfigSchema = z.object({
+  database: z.object({
+    messages: z.object({
+      insert_cron: zCron,
+      delete_cron: zCron,
+      // How long messages should be stored for (in milliseconds) - Default: 7 days
+      ttl: z.number().min(1000).default(604800000)
+    })
+  }),
   commands: z.object({
-    prefix: z.string().default('!')
+    prefix: z.string().default('>')
   }),
   developers: z.array(zSnowflake).default([])
 });

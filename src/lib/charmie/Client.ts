@@ -1,10 +1,9 @@
 import { SapphireClient } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
 import { type Message } from 'discord.js';
-import { CLIENT_CACHE_OPTIONS, CLIENT_INTENTS, CLIENT_PARTIALS, CLIENT_SWEEPER_OPTIONS } from '../utils/constants';
-
 import { join } from 'node:path';
 
+import { CLIENT_CACHE_OPTIONS, CLIENT_INTENTS, CLIENT_PARTIALS, CLIENT_SWEEPER_OPTIONS } from '../utils/constants';
 import ConfigManager from '../managers/config/ConfigManager';
 
 export class CharmieClient extends SapphireClient {

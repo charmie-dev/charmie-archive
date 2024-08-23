@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import { ExtendedPrismaClientType } from '../../types';
 import GuildCache from '../managers/cache/GuildCache';
 

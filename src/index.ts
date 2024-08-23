@@ -1,13 +1,16 @@
-// Imports used for registering
+// Imports from libraries used for registering
 
 import 'dotenv/config';
 import '@sapphire/plugin-editable-commands/register';
 import '@sapphire/framework';
-import './lib/utils/prisma';
 
-// Imports wrapped in {}
+// Imports from libaries wrapped in {}
 
+import * as SentryClient from '@sentry/node';
 import { container } from '@sapphire/framework';
+
+// Imports from other files
+
 import { CharmieClient } from './lib/charmie/Client';
 import { ExtendedPrismaClient } from './lib/utils/prisma';
 import { ExtendedPrismaClientType } from './types';
@@ -16,6 +19,8 @@ import { ExtendedPrismaClientType } from './types';
 
 import Logger, { AnsiColor } from './lib/utils/logger';
 import ConfigManager from './lib/managers/config/ConfigManager';
+import { EXIT_EVENTS } from './lib/utils/constants';
+import CronUtils from './lib/utils/cron';
 
 /**
  * The main client class.
@@ -36,6 +41,14 @@ const client = new CharmieClient();
 const prisma = ExtendedPrismaClient;
 
 /**
+ * The sentry client.
+ *
+ * We export it instead of adding it to the container because it's not widely used.
+ */
+
+export const Sentry = SentryClient;
+
+/**
  * Main function to assign container & env properties, connect to the database, and initialize the client.
  *
  * @param env - The node environment (e.g production)
@@ -54,6 +67,25 @@ async function main() {
     throw new Error('The environment variable DATABASE_URL is not defined.');
   }
 
+  if (!process.env.SENTRY_DSN) {
+    throw new Error('The environment variable SENTRY_DSN is not defined.');
+  }
+
+  // Cache the global configuration
+
+  ConfigManager.cacheGlobalConfig();
+
+  // Initialize sentry
+
+  await Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+    profilesSampleRate: 1,
+    tracesSampleRate: 1
+  });
+
+  Logger.log('SENTRY', 'Successfully initialized sentry client.', { color: AnsiColor.Green, full: true });
+
   // Initialize database connection & assign it to the container
 
   await prisma
@@ -70,10 +102,6 @@ async function main() {
 
   container.db = prisma;
 
-  // Cache the global configuration
-
-  ConfigManager.cacheGlobalConfig();
-
   // Login
 
   await client.login(process.env.BOT_TOKEN);
@@ -82,6 +110,22 @@ async function main() {
 void main().catch(error => {
   Logger.error(error);
 });
+
+// Handle exit events and perform cleanup operations
+
+EXIT_EVENTS.forEach(event => {
+  process.once(event, async () => {
+    await CronUtils.startCleanupOperations(event);
+  });
+});
+
+process.on('message', async message => {
+  if (message === 'shutdown') {
+    await CronUtils.startCleanupOperations('MESSAGE:SHUTDOWN');
+  }
+});
+
+// Log errors
 
 process.on('uncaughtException', error => {
   Logger.error('Uncaught exception:');
@@ -92,6 +136,8 @@ process.on('unhandledRejection', error => {
   Logger.error('Unhandled rejection:');
   console.error(error);
 });
+
+// Declare container properties for type augmentation
 
 declare module '@sapphire/pieces' {
   interface Container {

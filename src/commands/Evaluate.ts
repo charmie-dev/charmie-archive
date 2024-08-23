@@ -10,6 +10,12 @@ import ms from 'ms';
 
 let _;
 
+/**
+ * Evaluates a string of javascript code using the NodeJS eval function.
+ *
+ * Restricted to developers only.
+ */
+
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Developer,
   description: 'Execute JavaScript code.',

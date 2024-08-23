@@ -28,15 +28,45 @@ model Guilds {
 }
 
 model Infractions {
+  // The ID of the infraction
   id          Int            @id @unique @default(autoincrement())
+  // The ID of the guild the infraction was issued in
   guildId     String
+  // The ID of the user the infraction was issued to
   userId      String
+  // The ID of the moderator who issued the infraction
   moderatorId String
+  // The type of infraction
   type        InfractionType
-  reason      String         @default("Unspecified.")
+  // The reason for the infraction
+  reason      String         @default("Unspecified.") // We default to "Unspecified." in case the reason is not provided
+  // The date the infraction was issued
   createdAt   BigInt
+  // The date the infraction expires (if applicable)
   expiresAt   BigInt?
+  // Whether the infraction is auto-generated or not (issued by the client)
   auto        Boolean        @default(false)
 
   guild Guilds @relation(fields: [guildId], references: [id])
+}
+
+model Messages {
+  // The ID of the message
+  id          String   @id
+  // The id of the author of the message
+  authorId    String
+  // The id of the channel the message was sent in
+  channelId   String
+  // The id of the guild the message was sent in
+  guildId     String
+  // The date the message was sent
+  createdAt   DateTime
+  // Whether the message has been deleted or not
+  deleted     Boolean  @default(false) // We set the default to false so that we don't include it whenever we create a new message
+  // The content of the message
+  content     String?
+  // The sticker ID of the message (if any)
+  stickerId   String?
+  /// ID of the message this message is replying to (if any)
+  referenceId String?
 }

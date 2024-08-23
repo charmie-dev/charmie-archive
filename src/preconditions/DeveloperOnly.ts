@@ -1,5 +1,8 @@
 import { Precondition } from '@sapphire/framework';
 import { Message } from 'discord.js';
+
+import { PRECONDITION_IDENTIFIERS } from '../lib/utils/constants';
+
 import ConfigManager from '../lib/managers/config/ConfigManager';
 
 export default class DeveloperPrecondition extends Precondition {
@@ -12,9 +15,7 @@ export default class DeveloperPrecondition extends Precondition {
       ? this.ok()
       : this.error({
           message: 'This command is only available to developers.',
-          context: {
-            silent: true
-          }
+          identifier: PRECONDITION_IDENTIFIERS.Silent
         });
   }
 }

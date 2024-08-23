@@ -1,4 +1,5 @@
 import { fromZodError } from 'zod-validation-error';
+
 import { readYamlFile } from '../../utils';
 import { configSchema, GlobalConfig, globalConfigSchema, GuildConfig } from './schema';
 

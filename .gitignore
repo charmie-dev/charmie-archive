@@ -11,3 +11,7 @@ node_modules
 # Main configuration file
 
 charmie.cfg.yml
+
+# Sentry Config File
+
+.sentryclirc

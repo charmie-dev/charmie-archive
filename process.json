@@ -1,0 +1,19 @@
+{
+    "apps": [
+        {
+            "name": "charmie-bot",
+            "script": "dist/index.js",
+            "node_args": ["--enable-source-maps"],
+
+            "_note1": "We specify this option to `false` to prevent the process from restarting when we kill it from the code.",
+            "autorestart": false,
+
+            "_note2": "We set this option to accomodate for people hosting on Windows since it doesn't support system signals.",
+            "shutdown_with_message": true,
+
+            "_note3": "We set kill_timeout to a ridiculously high value to prevent the process from being killed before cleanup operations are completed.",
+            "_note4": "In the unlikely event that cleanup operations are not completed by this time the process will forcefully be killed and the messages that remained in the cache queue would be lost.",
+            "kill_timeout": 86400000 
+        }
+    ]
+}

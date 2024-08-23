@@ -1,5 +1,14 @@
 import { GatewayIntentBits, GuildMember, Options, Partials, Sweepers } from 'discord.js';
+
 import { GuildConfig } from '../managers/config/schema';
+
+// ————————————————————————————————————————————————————————————————————————————————
+// Client configuration
+// ————————————————————————————————————————————————————————————————————————————————
+
+/**
+ * The gateway intent bits for the client.
+ */
 
 export const CLIENT_INTENTS = [
   GatewayIntentBits.Guilds,
@@ -11,7 +20,15 @@ export const CLIENT_INTENTS = [
   GatewayIntentBits.GuildWebhooks
 ];
 
+/**
+ * The partials for the client.
+ */
+
 export const CLIENT_PARTIALS = [Partials.Channel, Partials.GuildMember, Partials.Message];
+
+/**
+ * The cache options for the client.
+ */
 
 export const CLIENT_CACHE_OPTIONS = Options.cacheWithLimits({
   ...Options.DefaultMakeCacheSettings,
@@ -27,6 +44,10 @@ export const CLIENT_CACHE_OPTIONS = Options.cacheWithLimits({
   GuildScheduledEventManager: 0, // Guild scheduled events
   ThreadMemberManager: 0 // Thread members
 });
+
+/**
+ * The sweeper options for the client.
+ */
 
 export const CLIENT_SWEEPER_OPTIONS = {
   ...Options.DefaultSweeperSettings,
@@ -45,6 +66,10 @@ export const CLIENT_SWEEPER_OPTIONS = {
   }
 };
 
+// ————————————————————————————————————————————————————————————————————————————————
+// Default guild configurations
+// ————————————————————————————————————————————————————————————————————————————————
+
 export const DEFAULT_GUILD_CONFIG: GuildConfig = {
   commands: {
     prefix: '>',
@@ -60,3 +85,43 @@ export const DEFAULT_GUILD_CONFIG: GuildConfig = {
     allowedChannels: []
   }
 };
+
+// ————————————————————————————————————————————————————————————————————————————————
+// Miscellaneous
+// ————————————————————————————————————————————————————————————————————————————————
+
+export const EXIT_EVENTS = [
+  'SIGHUP',
+  'SIGINT',
+  'SIGQUIT',
+  'SIGILL',
+  'SIGTRAP',
+  'SIGABRT',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGUSR1',
+  'SIGSEGV',
+  'SIGUSR2',
+  'SIGTERM'
+];
+
+export const DEFAULT_TIMEZONE = 'GMT';
+
+export const MESSAGE_DELETE_THRESHOLD = 1000 * 60 * 60 * 24 * 13;
+
+export const EMPTY_MESSAGE_CONTENT = 'Unknown content.';
+
+export const LOG_ENTRY_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  month: '2-digit',
+  day: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZone: DEFAULT_TIMEZONE,
+  hour12: false
+};
+
+export enum PRECONDITION_IDENTIFIERS {
+  Silent = 'Silent'
+}

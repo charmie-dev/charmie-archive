@@ -1,5 +1,23 @@
 import YAML from 'yaml';
 import fs from 'node:fs';
+import {
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+  Colors,
+  ContextMenuCommandInteraction,
+  GuildBasedChannel,
+  Message,
+  MessageCreateOptions,
+  ModalSubmitInteraction,
+  Role,
+  Snowflake,
+  TextBasedChannel,
+  ThreadChannel,
+  cleanContent as djsCleanContent
+} from 'discord.js';
+import Logger from './logger';
+import { container } from '@sapphire/framework';
+import { reply, send } from '@sapphire/plugin-editable-commands';
 
 /**
  * Reads a YAML file from the given path and returns the parsed content.
@@ -30,4 +48,149 @@ export async function createHastebinPaste(data: any, ext: string = 'js'): Promis
   if (!binReq.ok) throw `Error uploading to hastebin. Status code \`${binReq.status}\`.`;
   const bin = (await binReq.json()) as { key: string };
   return `https://hst.sh/${bin.key}.${ext}`;
+}
+
+/**
+ * Converts a { Snowflake } to a formatted string with the format <@${Snowflake}}> (\`${Snowflake}\`).
+ *
+ * @param user - The user to convert
+ * @returns string - The formatted string
+ */
+
+export function userMentionWithId(id: Snowflake): `<@${Snowflake}> (\`${Snowflake}\`)` {
+  return `<@${id}> (\`${id}\`)`;
+}
+
+/**
+ * Converts a { channel } object to a string with the format <#${Snowflake}> (\`#${string}\`).
+ *
+ * @param channel - The channel to format
+ * @returns string - The formatted string
+ */
+
+export function channelMentionWithName(channel: GuildBasedChannel | ThreadChannel): `<#${Snowflake}> (\`#${string}\`)` {
+  return `<#${channel.id}> (\`#${channel.name}\`)`;
+}
+
+/**
+ * Converts a { role } object to a string with the format <@&${Snowflake}> (\`@${string}\`).
+ *
+ * @param role - The role to format
+ * @returns string - The formatted string
+ */
+
+export function roleMentionWithName(role: Role): `<@&${Snowflake}> (\`@${string}\`)` {
+  return `<@&${role.id}> (\`@${role.name}\`)`;
+}
+
+/**
+ * Pluralizes a word based on the given count
+ *
+ * @param count - The count used to determine the plural form
+ * @param singular - The singular form of the word
+ * @param plural - The plural form of the word, defaults to `{singular}s`
+ * @returns The pluralized word
+ */
+export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
+  return count === 1 ? singular : plural;
+}
+
+/**
+ * Takes a string and cleans it up for display.
+ *
+ * @param str The string to clean up
+ * @param channel The message channel
+ * @returns string - The cleaned up string
+ */
+
+export function cleanContent(str: string, channel: TextBasedChannel): string {
+  // Escape custom emojis
+  str = str.replace(/<(a?):([^:\n\r]+):(\d{17,19})>/g, '<$1\\:$2\\:$3>');
+  // Add IDs to mentions
+  str = str.replace(/<@!?(\d{17,19})>/g, `<@$1> ($1)`);
+  return djsCleanContent(str, channel);
+}
+
+/**
+ * Disconnects from the database and logs the termination.
+ */
+
+export async function terminateDbConnection(): Promise<void> {
+  Logger.info('Terminating database connection...');
+
+  await container.db.$disconnect().then(() => {
+    Logger.info('Successfully disconnected from database.');
+  });
+}
+
+/**
+ * Throws an error in the form of an embed.
+ *
+ * @param message The message, or interaction to send the error to
+ * @param error The error message
+ * @param preserve Whether to preserve the error message (cannot be applied to interactions)
+ * @param delay How long  to wait before deleting the error message (cannot be applied to interactions)
+ *
+ * @returns unkown
+ */
+
+export async function embeddedError(
+  message:
+    | Message
+    | ChatInputCommandInteraction
+    | ButtonInteraction
+    | ContextMenuCommandInteraction
+    | ModalSubmitInteraction,
+  error: string,
+  preserve: boolean = false,
+  delay: number = 7500
+): Promise<unknown> {
+  if (message instanceof Message) {
+    const errorMsg = await sendOrReply(message, {
+      embeds: [{ description: error, color: Colors.Red }]
+    });
+
+    if (!preserve) {
+      setTimeout(() => {
+        errorMsg.delete().catch(() => {});
+        message.delete().catch(() => {});
+      }, delay);
+    }
+  } else if (
+    message instanceof ChatInputCommandInteraction ||
+    message instanceof ModalSubmitInteraction ||
+    message instanceof ButtonInteraction ||
+    message instanceof ContextMenuCommandInteraction
+  ) {
+    if (!message.deferred && !message.replied)
+      return message.reply({
+        embeds: [{ description: `${error}`, color: Colors.Red }],
+        ephemeral: true
+      });
+    else
+      return message.editReply({
+        embeds: [{ description: `${error}`, color: Colors.Red }]
+      });
+  }
+}
+
+/**
+ * Attempts to reply to a message, or send a message if the message is not available to be replied to.
+ *
+ * @param message The message to reply to
+ * @param content The content to send (or message create options)
+ *
+ * @returns {@link Message} The message that was sent
+ */
+
+export async function sendOrReply(message: Message, content: string | MessageCreateOptions): Promise<Message> {
+  if (typeof content === 'string') {
+    return reply(message, content).catch(async () => {
+      return send(message, content);
+    });
+  } else {
+    return reply(message, content).catch(() => {
+      return send(message, content);
+    });
+  }
 }

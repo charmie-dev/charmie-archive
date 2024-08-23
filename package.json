@@ -5,8 +5,11 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:pm2": "pm2 start process.json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org codys-dev-stuff --project charmie ./dist && sentry-cli sourcemaps upload --org codys-dev-stuff --project charmie ./dist"
   },
   "repository": {
     "type": "git",
@@ -31,6 +34,9 @@
     "@sapphire/decorators": "^6.1.0",
     "@sapphire/framework": "^5.2.1",
     "@sapphire/plugin-editable-commands": "^4.0.2",
+    "@sentry/cli": "^2.33.1",
+    "@sentry/node": "^8.26.0",
+    "cron": "^3.1.7",
     "discord.js": "^14.15.3",
     "ms": "^2.1.3",
     "prisma": "^5.18.0",
