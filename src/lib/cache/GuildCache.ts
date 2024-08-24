@@ -2,7 +2,7 @@ import { Guilds as Guild } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
-import { DEFAULT_GUILD_CONFIG } from '../../utils/constants';
+import { DEFAULT_GUILD_CONFIG } from '../utils/constants';
 
 export default class GuildCache {
   /**

@@ -21,7 +21,7 @@ import { permissionsCheck } from '../lib/utils';
   usage: '[user]',
   description: 'Get information about a user.',
   aliases: ['ui', 'whois'],
-  flags: ['undos', 'u']
+  mappedFlags: [{ name: 'undos', aliases: ['u'] }]
 })
 export default class Userinfo extends CharmieCommand {
   public async messageRun(

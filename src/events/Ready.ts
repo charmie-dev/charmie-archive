@@ -2,7 +2,7 @@ import { Events, Listener } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
 
 import Logger, { AnsiColor } from '../lib/utils/logger';
-import MessageCache from '../lib/managers/cache/MessageCache';
+import MessageCache from '../lib/cache/MessageCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.ClientReady })
 export default class Ready extends Listener<typeof Events.ClientReady> {

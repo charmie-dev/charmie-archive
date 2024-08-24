@@ -25,6 +25,7 @@ let timeTaken: number;
   guarded: true,
   description: 'Execute JavaScript code.',
   aliases: ['eval', 'e', 'ev', 'execute', 'exec'],
+  usage: ['<code>'],
   mappedOptions: EVAL_CMD_OPTIONS,
   mappedFlags: EVAL_CMD_FLAGS
 })

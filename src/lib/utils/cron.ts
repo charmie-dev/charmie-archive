@@ -6,12 +6,12 @@ import { Sentry } from '../..';
 import { terminateDbConnection } from '.';
 
 import Logger, { AnsiColor } from './logger';
-import MessageCache from '../managers/cache/MessageCache';
+import MessageCache from '../cache/MessageCache';
 
 /**
  * The class responsible for handling/managing cron utilities.
  *
- * Full credits for this system go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
+ * A lot of credits for this system go to the {@link https://github.com/Rodis-Infrastructure/Azalea Azalea Discord Bot}.
  */
 
 export default class CronUtils {

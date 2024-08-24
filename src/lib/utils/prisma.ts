@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { ExtendedPrismaClientType } from '../types';
 
-import GuildCache from '../managers/cache/GuildCache';
+import GuildCache from '../cache/GuildCache';
 
 export const ExtendedPrismaClient = new PrismaClient().$extends({
   query: {

@@ -5,6 +5,7 @@ import {
   ChatInputCommandInteraction,
   Colors,
   ContextMenuCommandInteraction,
+  EmbedField,
   Guild,
   GuildBasedChannel,
   GuildMember,
@@ -18,13 +19,14 @@ import {
   cleanContent as djsCleanContent
 } from 'discord.js';
 
-import { container } from '@sapphire/framework';
+import { Command, Container, container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
-import { GuildConfig } from '../managers/config/schema';
+import { GlobalConfig, GuildConfig } from '../managers/config/schema';
 import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './commands';
 
 import Logger from './logger';
+import { CommandCategory } from '../charmie/Command';
 
 /**
  * This file contains utility functions that are used throughout the bot.
@@ -228,4 +230,37 @@ export function permissionsCheck(member: GuildMember, guild: Guild, config: Guil
     return true;
 
   return false;
+}
+
+/**
+ * Generates the embed fields for the help command.
+ *
+ * @param config The global configuration
+ * @param authorId The id of the author
+ * @param container The container imported from sapphire
+ * @returns embed fields
+ */
+
+export function generateHelpFields(config: GlobalConfig, authorId: string, container: Container): EmbedField[] {
+  const categories = Object.values(CommandCategory);
+  const commandStore = container.stores.get('commands');
+
+  return categories.flatMap(category => {
+    const commands = [...commandStore.values()]
+      .filter(c => c.category === category)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (commands.length === 0) return [];
+
+    const field: EmbedField = {
+      name: category,
+      value: commands.map(c => `\`${c.name}\``).join(', '),
+      inline: false
+    };
+
+    if (category === CommandCategory.Developer && !config.developers.includes(authorId)) return [];
+    const fields = [field];
+
+    return fields;
+  });
 }

@@ -4,7 +4,7 @@ import { Message as DiscordMessage, PartialMessage } from 'discord.js';
 
 import { cleanContent } from '../lib/utils';
 
-import MessageCache from '../lib/managers/cache/MessageCache';
+import MessageCache from '../lib/cache/MessageCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageUpdate })
 export default class MessageUpdate extends Listener<typeof Events.MessageUpdate> {

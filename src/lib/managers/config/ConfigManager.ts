@@ -9,7 +9,7 @@ import { configSchema, GlobalConfig, globalConfigSchema, GuildConfig } from './s
 import { DEFAULT_GUILD_CONFIG } from '../../utils/constants';
 
 import Logger, { AnsiColor } from '../../utils/logger';
-import GuildCache from '../cache/GuildCache';
+import GuildCache from '../../cache/GuildCache';
 
 /**
  * The config manager class.

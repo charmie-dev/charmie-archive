@@ -14,12 +14,12 @@ import { container } from '@sapphire/framework';
 import { CharmieClient } from './lib/charmie/Client';
 import { ExtendedPrismaClient } from './lib/utils/prisma';
 import { ExtendedPrismaClientType } from './lib/types';
+import { EXIT_EVENTS } from './lib/utils/constants';
 
 // Other imports
 
 import Logger, { AnsiColor } from './lib/utils/logger';
 import ConfigManager from './lib/managers/config/ConfigManager';
-import { EXIT_EVENTS } from './lib/utils/constants';
 import CronUtils from './lib/utils/cron';
 
 /**

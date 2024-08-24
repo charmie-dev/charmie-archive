@@ -111,6 +111,10 @@ export class CharmieCommand extends Command {
    */
 
   protected parseMappedFlags(flags: MappedFlag[]) {
+    if (!this.options.flags) {
+      this.options.flags = [];
+    }
+
     const parsedFlagArray = this.options.flags as string[];
 
     // Loop through each mapped flag and add it to the flags array
@@ -126,6 +130,10 @@ export class CharmieCommand extends Command {
    */
 
   protected parseMappedOptions(options: MappedOption[]) {
+    if (!this.options.options) {
+      this.options.options = [];
+    }
+
     const parsedOptionArray = this.options.options as string[];
 
     // Loop through each mapped flag and add it to the flags array

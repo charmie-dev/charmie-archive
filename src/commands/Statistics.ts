@@ -7,7 +7,7 @@ import ms from 'ms';
 import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
 import { DEFAULT_EMBED_COLOR } from '../lib/utils/constants';
 
-import MessageCache from '../lib/managers/cache/MessageCache';
+import MessageCache from '../lib/cache/MessageCache';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Developer,
