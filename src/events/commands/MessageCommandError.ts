@@ -12,7 +12,7 @@ export default class MessageCommandError extends Listener<typeof Events.MessageC
   async run(uError: UserError, { message }: MessageCommandErrorPayload) {
     if (typeof uError !== 'string') {
       const sentryId = Sentry.captureException(uError);
-      Logger.error(`Message command error: ${uError}`);
+      Logger.error(`Message command error: ${uError}`, uError);
       return MessageCommandError.throw(
         message,
         `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`,

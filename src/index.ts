@@ -134,13 +134,13 @@ process.on('message', async message => {
 // Log errors
 
 process.on('uncaughtException', error => {
-  Logger.error('Uncaught exception:');
-  console.error(error);
+  const sentryId = Sentry.captureException(error);
+  Logger.error(`Uncaught exception ${sentryId}:`, error);
 });
 
 process.on('unhandledRejection', error => {
-  Logger.error('Unhandled rejection:');
-  console.error(error);
+  const sentryId = Sentry.captureException(error);
+  Logger.error(`Unhandled rejection ${sentryId}:`, error);
 });
 
 // Declare container properties for type augmentation

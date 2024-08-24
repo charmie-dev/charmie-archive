@@ -82,9 +82,10 @@ export default class Logger {
    * @param message The message to log
    */
 
-  static error(message: string): void {
+  static error(message: string, ...values: readonly unknown[]): void {
     Logger.log('ERROR', message, {
       color: AnsiColor.Red
     });
+    console.error(...values);
   }
 }
