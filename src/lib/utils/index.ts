@@ -11,18 +11,20 @@ import {
   Message,
   MessageCreateOptions,
   ModalSubmitInteraction,
-  PermissionFlagsBits,
   Role,
   Snowflake,
   TextBasedChannel,
   ThreadChannel,
   cleanContent as djsCleanContent
 } from 'discord.js';
-import Logger from './logger';
+
 import { container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
+
 import { GuildConfig } from '../managers/config/schema';
-import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './constants';
+import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './commands';
+
+import Logger from './logger';
 
 /**
  * This file contains utility functions that are used throughout the bot.

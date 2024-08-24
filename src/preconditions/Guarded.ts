@@ -5,7 +5,7 @@ import { PRECONDITION_IDENTIFIERS } from '../lib/utils/constants';
 
 import ConfigManager from '../lib/managers/config/ConfigManager';
 
-export default class DeveloperPrecondition extends Precondition {
+export default class GuardedPrecondition extends Precondition {
   public async messageRun(message: Message) {
     return this.check(message.author.id);
   }
@@ -22,6 +22,6 @@ export default class DeveloperPrecondition extends Precondition {
 
 declare module '@sapphire/framework' {
   interface Preconditions {
-    DeveloperOnly: never;
+    Guarded: never;
   }
 }

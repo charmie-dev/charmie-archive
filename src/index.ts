@@ -113,7 +113,7 @@ async function main() {
   await client.login(process.env.BOT_TOKEN);
 }
 
-void main().catch(error => {
+main().catch(error => {
   Logger.error(error);
 });
 

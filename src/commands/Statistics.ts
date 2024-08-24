@@ -11,9 +11,9 @@ import MessageCache from '../lib/managers/cache/MessageCache';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Developer,
+  guarded: true,
   description: "Get the bot's statistics.",
-  aliases: ['stats', 'health'],
-  preconditions: ['GuildOnly', 'DeveloperOnly']
+  aliases: ['stats', 'health']
 })
 export default class Statistics extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message<true>) {

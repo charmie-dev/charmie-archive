@@ -14,14 +14,14 @@ import ConfigManager from '../lib/managers/config/ConfigManager';
  * For the original version of this listener, see {@link https://github.com/sapphiredev/framework/blob/main/src/optional-listeners/message-command-listeners/CorePreMessageParser.ts Sapphire's CorePreMessageParser.ts}.
  */
 
-export default class CorePreMessageParsed extends Listener<typeof Events.MessageCreate> {
+export default class CoreListener extends Listener<typeof Events.PreMessageParsed> {
   private readonly requiredPermissions = new PermissionsBitField([
     PermissionFlagsBits.ViewChannel,
     PermissionFlagsBits.SendMessages
   ]).freeze();
 
   public constructor(context: Listener.LoaderContext) {
-    super(context, { event: Events.MessageCreate });
+    super(context, { event: Events.PreMessageParsed });
   }
 
   public async run(message: Message) {

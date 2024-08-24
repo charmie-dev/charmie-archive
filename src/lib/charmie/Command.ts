@@ -1,4 +1,3 @@
-import { Guilds } from '@prisma/client';
 import {
   AliasPiece,
   ApplicationCommandRegistry,
@@ -11,8 +10,10 @@ import {
   MessageCommandContext,
   Args as SapphireArgs
 } from '@sapphire/framework';
-import { Awaitable, CacheType, type Message as DJSMessage } from 'discord.js';
+import { Awaitable, type Message as DJSMessage } from 'discord.js';
+
 import { GuildConfig } from '../managers/config/schema';
+import { parse } from 'yaml';
 
 export class CharmieCommand extends Command {
   /**
@@ -36,6 +37,28 @@ export class CharmieCommand extends Command {
   public override readonly fullCategory: readonly string[];
 
   /**
+   * Whether the command is guarded, meaning it can only be used by the bot owners.
+   */
+
+  public guarded: boolean;
+
+  /**
+   * The mapped flags for the command.
+   *
+   * Each of these flags is applied to the flags option, however, we use a different type for better option for better readability.
+   */
+
+  public readonly mappedFlags: MappedFlag[];
+
+  /**
+   * The mapped options for the command.
+   *
+   * Each of these options is applied to the options option, however, we use a different type for better option for better readability.
+   */
+
+  public readonly mappedOptions: MappedOption[];
+
+  /**
    * The constructor of the CharmieCommand class.
    *
    * We override the default sapphire constructor to accomodate for the usage and ctx options
@@ -46,9 +69,16 @@ export class CharmieCommand extends Command {
 
   public constructor(context: CharmieCommand.Context, options: CharmieCommandOptions) {
     super(context, options);
+
     this.usage = options.usage ?? null;
     this.ctx = options.ctx ? options.ctx : null;
     this.fullCategory = options.ctx ? [options.ctx] : [];
+    this.guarded = options.guarded ?? false;
+    this.mappedFlags = options.mappedFlags ?? [];
+    this.mappedOptions = options.mappedOptions ?? [];
+
+    this.parseMappedFlags(options.mappedFlags ?? []);
+    this.parseMappedOptions(options.mappedOptions ?? []);
   }
 
   /**
@@ -57,11 +87,53 @@ export class CharmieCommand extends Command {
    * #parseConstructorPreConditionsRequiredUserPermissions is exempt from this override to accomodate the custom permission system
    */
 
-  public override parseConstructorPreConditions(options: CommandOptions) {
+  public override parseConstructorPreConditions(options: CharmieCommandOptions) {
     this.parseConstructorPreConditionsRunIn(options);
     this.parseConstructorPreConditionsNsfw(options);
     this.parseConstructorPreConditionsRequiredClientPermissions(options);
     this.parseConstructorPreConditionsCooldown(options);
+    this.parseConstructorPreConditionsGuarded(options);
+  }
+
+  /**
+   * The method that parses the guarded option.
+   * It appends the DeveloperOnly precondition to the preconditions array if the command is guarded.
+   *
+   * @param options The options of the command.
+   */
+
+  protected parseConstructorPreConditionsGuarded(options: CharmieCommandOptions) {
+    if (options.guarded) this.preconditions.append('Guarded');
+  }
+
+  /**
+   * Parse the mapped flags into the command's flags array.
+   */
+
+  protected parseMappedFlags(flags: MappedFlag[]) {
+    const parsedFlagArray = this.options.flags as string[];
+
+    // Loop through each mapped flag and add it to the flags array
+
+    for (const flag of flags) {
+      parsedFlagArray.push(flag.name);
+      parsedFlagArray.push(...flag.aliases);
+    }
+  }
+
+  /**
+   * Parse the mapped options into the command's option array.
+   */
+
+  protected parseMappedOptions(options: MappedOption[]) {
+    const parsedOptionArray = this.options.options as string[];
+
+    // Loop through each mapped flag and add it to the flags array
+
+    for (const option of options) {
+      parsedOptionArray.push(option.name);
+      parsedOptionArray.push(...option.aliases);
+    }
   }
 
   /**
@@ -82,6 +154,9 @@ export class CharmieCommand extends Command {
   ): Awaitable<unknown>;
 }
 
+export type MappedFlag = { name: string; aliases: string[] };
+export type MappedOption = { name: string; aliases: string[] };
+
 export interface CharmieCommandOptions extends Command.Options {
   /**
    * The category this command belongs to.
@@ -94,6 +169,24 @@ export interface CharmieCommandOptions extends Command.Options {
    */
 
   readonly usage?: string[] | string | null;
+
+  /**
+   * Whether this command is guarded, meaning it can only be used by the bot owners.
+   */
+
+  readonly guarded?: boolean;
+
+  /**
+   * The mapped flags for the command.
+   */
+
+  readonly mappedFlags?: MappedFlag[];
+
+  /**
+   * The mapped options for the command.
+   */
+
+  readonly mappedOptions?: MappedOption[];
 }
 
 /**

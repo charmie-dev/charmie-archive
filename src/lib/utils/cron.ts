@@ -3,10 +3,10 @@ import { CronJob } from 'cron';
 
 import { DEFAULT_TIMEZONE } from './constants';
 import { Sentry } from '../..';
+import { terminateDbConnection } from '.';
 
 import Logger, { AnsiColor } from './logger';
 import MessageCache from '../managers/cache/MessageCache';
-import { terminateDbConnection } from '.';
 
 /**
  * The class responsible for handling/managing cron utilities.
