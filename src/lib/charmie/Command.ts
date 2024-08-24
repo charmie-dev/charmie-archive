@@ -11,7 +11,7 @@ import {
   MessageCommandContext,
   Args as SapphireArgs
 } from '@sapphire/framework';
-import { Awaitable, type Message as DJSMessage } from 'discord.js';
+import { Awaitable, CacheType, type Message as DJSMessage } from 'discord.js';
 
 export class CharmieCommand extends Command {
   /**
@@ -133,7 +133,6 @@ export enum CommandCategory {
  */
 
 export namespace CharmieCommand {
-  export type Message = DJSMessage;
   export type Args = SapphireArgs;
   export type Options = CharmieCommandOptions;
   export type JSON = CommandJSON;
@@ -145,6 +144,7 @@ export namespace CharmieCommand {
   export type RunInUnion = CommandRunInUnion;
   export type SpecificRunIn = CommandSpecificRunIn;
   export type Registry = ApplicationCommandRegistry;
+  export type Message<InGuild extends boolean = boolean> = DJSMessage<InGuild>;
   export type ChatInputCommandInteraction<
     Cached extends import('discord.js').CacheType = import('discord.js').CacheType
   > = import('discord.js').ChatInputCommandInteraction<Cached>;
