@@ -26,6 +26,13 @@ export default class Statistics extends CharmieCommand {
     await this.container.db.guilds.findUnique({ where: { id: message.guildId } });
     const dbQueryPing = performance.now() - start;
 
+    // Get the database size in MB.
+    const dbSize = await this.container.db.$queryRaw<[{ size_in_mb: number }]>`
+    SELECT pg_database_size(current_database()) / 1024 / 1024 AS size_in_mb
+  `;
+
+    const dbSizeInMB = dbSize[0].size_in_mb;
+
     const embed = new EmbedBuilder()
       .setColor(DEFAULT_EMBED_COLOR)
       .setAuthor({ name: `Statistics Report`, iconURL: client.user!.displayAvatarURL() })
@@ -47,9 +54,9 @@ export default class Statistics extends CharmieCommand {
         },
         {
           name: 'Other Information',
-          value: `\\- Database Heartbeat: \`${Math.floor(dbQueryPing)}ms\`\n\\- Client Heartbeat: \`${
-            client.ws.ping
-          }ms\``
+          value: `\\- Database Heartbeat: \`${Math.floor(
+            dbQueryPing
+          )}ms\`\n\\- Database Size: \`${dbSizeInMB} MB\`\n\\- Client Heartbeat: \`${client.ws.ping}ms\``
         }
       ])
       .setTimestamp();
