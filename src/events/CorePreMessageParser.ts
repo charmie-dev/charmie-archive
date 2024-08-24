@@ -5,7 +5,7 @@ import { isDMChannel } from '@sapphire/discord.js-utilities';
 
 import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from '../lib/charmie/Command';
 
-import GuildCache from '../lib/managers/cache/GuildCache';
+import ConfigManager from '../lib/managers/config/ConfigManager';
 
 /**
  * The overriden message command listener from sapphire that runs after the message has been parsed. (This means no bots or webhooks.)
@@ -107,14 +107,14 @@ export default class CorePreMessageParsed extends Listener<typeof Events.Message
       const result = message.inGuild()
         ? await Result.fromAsync(async () => {
             message.client.emit(Events.MessageCommandRun, message, command, { ...payload, args });
-            const guild = await GuildCache.get(message.guildId);
+            const config = await ConfigManager.getGuildConfig(message.guildId);
 
             const stopwatch = new Stopwatch();
             const result = await payload.command.messageRun(message, args, {
               commandName,
               commandPrefix,
               prefix,
-              guild
+              config
             } as CharmieCommandGuildRunContext);
             const { duration } = stopwatch.stop();
 

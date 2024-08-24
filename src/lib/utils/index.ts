@@ -5,10 +5,13 @@ import {
   ChatInputCommandInteraction,
   Colors,
   ContextMenuCommandInteraction,
+  Guild,
   GuildBasedChannel,
+  GuildMember,
   Message,
   MessageCreateOptions,
   ModalSubmitInteraction,
+  PermissionFlagsBits,
   Role,
   Snowflake,
   TextBasedChannel,
@@ -18,6 +21,8 @@ import {
 import Logger from './logger';
 import { container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
+import { GuildConfig } from '../managers/config/schema';
+import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './constants';
 
 /**
  * This file contains utility functions that are used throughout the bot.
@@ -193,4 +198,32 @@ export async function sendOrReply(message: Message, content: string | MessageCre
   return reply(message, content).catch(() => {
     return send(message, content);
   });
+}
+
+/**
+ * Performs various permission checks on a given member.
+ *
+ * @param member The member to check permissions for
+ * @param config The guild configuration
+ * @returns boolean Whether the member passed the permission checks
+ */
+
+export function permissionsCheck(member: GuildMember, guild: Guild, config: GuildConfig): boolean {
+  if (member.id === guild.ownerId) return true;
+  if (member.permissions.any(COMMON_STAFF_PERMISSIONS, true)) return true;
+  if (config.moderators.some(role => member.roles.cache.has(role))) return true;
+
+  const { overrides } = config.commands;
+  if (overrides.length === 0) return false;
+
+  if (
+    overrides.some(
+      override =>
+        member.roles.cache.some(role => role.id === override.id) &&
+        override.commands.some(cmd => MODERATION_COMMANDS.includes(cmd))
+    )
+  )
+    return true;
+
+  return false;
 }

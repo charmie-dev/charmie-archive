@@ -110,7 +110,8 @@ const commandSchema = z.object({
  */
 
 export const configSchema = z.object({
-  commands: commandSchema
+  commands: commandSchema,
+  moderators: z.array(zSnowflake).default([])
 });
 
 /**

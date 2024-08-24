@@ -1,4 +1,4 @@
-import { Colors, GatewayIntentBits, GuildMember, Options, Partials, Sweepers } from 'discord.js';
+import { Colors, GatewayIntentBits, GuildMember, Options, Partials, PermissionFlagsBits, Sweepers } from 'discord.js';
 
 import { GuildConfig } from '../managers/config/schema';
 
@@ -78,6 +78,7 @@ export const CLIENT_SWEEPER_OPTIONS = {
 // ————————————————————————————————————————————————————————————————————————————————
 
 export const DEFAULT_GUILD_CONFIG: GuildConfig = {
+  moderators: [],
   commands: {
     prefix: '>',
     delete: false,
@@ -137,3 +138,16 @@ export enum PRECONDITION_IDENTIFIERS {
   CommandDisabledInChannel = 'CommandDisabledInChannel',
   NoPermissions = 'NoPermissions'
 }
+
+export const COMMON_STAFF_PERMISSIONS = [
+  PermissionFlagsBits.Administrator,
+  PermissionFlagsBits.ManageGuild,
+  PermissionFlagsBits.ManageChannels,
+  PermissionFlagsBits.ManageRoles,
+  PermissionFlagsBits.ModerateMembers,
+  PermissionFlagsBits.BanMembers,
+  PermissionFlagsBits.KickMembers,
+  PermissionFlagsBits.ManageMessages
+];
+
+export const MODERATION_COMMANDS = ['warn', 'mute', 'kick', 'ban', 'unmute', 'unban'];

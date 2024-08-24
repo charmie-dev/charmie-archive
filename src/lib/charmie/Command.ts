@@ -12,6 +12,7 @@ import {
   Args as SapphireArgs
 } from '@sapphire/framework';
 import { Awaitable, CacheType, type Message as DJSMessage } from 'discord.js';
+import { GuildConfig } from '../managers/config/schema';
 
 export class CharmieCommand extends Command {
   /**
@@ -100,7 +101,7 @@ export interface CharmieCommandOptions extends Command.Options {
  */
 
 export interface CharmieCommandGuildRunContext extends MessageCommandContext {
-  guild: Guilds;
+  config: GuildConfig;
 }
 
 /**
