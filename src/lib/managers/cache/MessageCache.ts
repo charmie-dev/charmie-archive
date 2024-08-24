@@ -32,7 +32,7 @@ export default class MessageCache {
   /**
    * The que for the messages that need to be purged.
    */
-  static _purgeQueue: PurgeOptions[] = [];
+  public static _purgeQueue: PurgeOptions[] = [];
 
   static async get(id: Snowflake): Promise<Message | null> {
     let message = MessageCache._dbQueue.get(id) ?? null;
@@ -42,6 +42,15 @@ export default class MessageCache {
     }
 
     return message;
+  }
+
+  /**
+   * Get the current database queue size.
+   * @returns The number of messages in the database queue
+   */
+
+  static getQueueSize(): number {
+    return MessageCache._dbQueue.size;
   }
 
   /**

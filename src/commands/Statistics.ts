@@ -33,7 +33,9 @@ export default class Statistics extends CharmieCommand {
       .setFields([
         {
           name: 'Cache Information',
-          value: `\\- Guilds: \`${client.guilds.cache.size}\`\n\\- Users: \`${client.users.cache.size}\`\n\\- Channels: \`${client.channels.cache.size}\`\n\\- Messages: \`${MessageCache.queue.length}\``
+          value: `\\- Guilds: \`${client.guilds.cache.size}\`\n\\- Users: \`${
+            client.users.cache.size
+          }\`\n\\- Channels: \`${client.channels.cache.size}\`\n\\- Messages: \`${MessageCache.getQueueSize()}\``
         },
         {
           name: 'Process Information',
