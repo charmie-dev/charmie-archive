@@ -31,6 +31,14 @@ export enum AnsiColor {
  */
 
 export default class Logger {
+  /**
+   * Log to the console.
+   *
+   * @param level The log level
+   * @param message The message to log to the console
+   * @param options The color options for the log
+   */
+
   static log(level: string, message: string, options?: ColorOptions): void {
     const timestamp = new Date().toISOString();
     const timestampString = `${AnsiColor.Grey}[${timestamp}]${AnsiColor.Reset}`;
@@ -44,17 +52,35 @@ export default class Logger {
     }
   }
 
+  /**
+   * Log a message to the console with the INFO level.
+   *
+   * @param message The message to log
+   */
+
   static info(message: string): void {
     Logger.log('INFO', message, {
       color: AnsiColor.Cyan
     });
   }
 
+  /**
+   * Log a message to the console with the WARN level.
+   *
+   * @param message The message to log
+   */
+
   static warn(message: string): void {
     Logger.log('WARN', message, {
       color: AnsiColor.Yellow
     });
   }
+
+  /**
+   * Log a message to the console with the ERROR level.
+   *
+   * @param message The message to log
+   */
 
   static error(message: string): void {
     Logger.log('ERROR', message, {
