@@ -190,13 +190,7 @@ export async function embeddedError(
  */
 
 export async function sendOrReply(message: Message, content: string | MessageCreateOptions): Promise<Message> {
-  if (typeof content === 'string') {
-    return reply(message, content).catch(async () => {
-      return send(message, content);
-    });
-  } else {
-    return reply(message, content).catch(() => {
-      return send(message, content);
-    });
-  }
+  return reply(message, content).catch(() => {
+    return send(message, content);
+  });
 }
