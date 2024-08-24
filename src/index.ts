@@ -13,7 +13,7 @@ import { container } from '@sapphire/framework';
 
 import { CharmieClient } from './lib/charmie/Client';
 import { ExtendedPrismaClient } from './lib/utils/prisma';
-import { ExtendedPrismaClientType } from './types';
+import { ExtendedPrismaClientType } from './lib/types';
 
 // Other imports
 
@@ -88,6 +88,8 @@ async function main() {
 
   // Initialize database connection & assign it to the container
 
+  let start = Date.now();
+
   await prisma
     .$connect()
     .then(() => {
@@ -99,6 +101,10 @@ async function main() {
     .catch(() => {
       throw new Error('Database connection could not be initialized. Aborting startup.');
     });
+
+  let ping = (Date.now() - start) / 2;
+
+  Logger.info(`Database connection took ${ping}ms.`);
 
   container.db = prisma;
 

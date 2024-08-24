@@ -1,4 +1,4 @@
-import { GatewayIntentBits, GuildMember, Options, Partials, Sweepers } from 'discord.js';
+import { Colors, GatewayIntentBits, GuildMember, Options, Partials, Sweepers } from 'discord.js';
 
 import { GuildConfig } from '../managers/config/schema';
 
@@ -112,6 +112,8 @@ export const EXIT_EVENTS = [
   'SIGTERM'
 ];
 
+export const DEFAULT_EMBED_COLOR = Colors.NotQuiteBlack;
+
 export const DEFAULT_TIMEZONE = 'GMT';
 
 export const MESSAGE_DELETE_THRESHOLD = 1000 * 60 * 60 * 24 * 13;
@@ -130,5 +132,8 @@ export const LOG_ENTRY_DATE_FORMAT: Intl.DateTimeFormatOptions = {
 };
 
 export enum PRECONDITION_IDENTIFIERS {
-  Silent = 'Silent'
+  Silent = 'Silent',
+  CommandDisabled = 'CommandDisabled',
+  CommandDisabledInChannel = 'CommandDisabledInChannel',
+  NoPermissions = 'NoPermissions'
 }
