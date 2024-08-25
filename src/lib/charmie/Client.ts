@@ -94,5 +94,6 @@ export class CharmieClient extends SapphireClient {
 
     this.stores.get('interaction-handlers').registerPath(join(this.rootData.root, 'interactions'));
     this.stores.get('listeners').registerPath(join(this.rootData.root, 'events'));
+    this.stores.get('preconditions').registerPath(join(this.rootData.root, 'conditions'));
   }
 }
