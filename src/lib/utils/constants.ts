@@ -1,7 +1,6 @@
 import { Colors, GatewayIntentBits, GuildMember, Options, Partials, PermissionFlagsBits, Sweepers } from 'discord.js';
 
-import { GuildConfig } from '../managers/config/schema';
-import { MappedFlag, MappedOption } from '../charmie/Command';
+import { CommandConfig } from '../managers/config/schema';
 
 /**
  * This file contains all the constants used throughout the bot.
@@ -75,24 +74,21 @@ export const CLIENT_SWEEPER_OPTIONS = {
 };
 
 // ————————————————————————————————————————————————————————————————————————————————
-// Default guild configurations
+// Default configurations
 // ————————————————————————————————————————————————————————————————————————————————
 
-export const DEFAULT_GUILD_CONFIG: GuildConfig = {
-  moderators: [],
-  commands: {
-    prefix: '>',
-    delete: false,
-    disabled: [],
-    respondIfNoPerms: true,
-    respondIfDisabled: true,
-    respondIfDisabledInChannel: true,
-    errorDeleteDelay: 7500,
-    preserveErrors: false,
-    moderatorPublic: false,
-    overrides: [],
-    allowedChannels: []
-  }
+export const DEFAULT_COMMANDS_CONFIG: CommandConfig = {
+  prefix: '>',
+  delete: false,
+  disabled: [],
+  respondIfNoPerms: true,
+  respondIfDisabled: true,
+  respondIfDisabledInChannel: true,
+  errorDeleteDelay: 7500,
+  preserveErrors: false,
+  moderatorPublic: false,
+  overrides: [],
+  allowedChannels: []
 };
 
 // ————————————————————————————————————————————————————————————————————————————————

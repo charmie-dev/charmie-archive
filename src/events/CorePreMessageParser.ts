@@ -107,14 +107,14 @@ export default class CoreListener extends Listener<typeof Events.PreMessageParse
       const result = message.inGuild()
         ? await Result.fromAsync(async () => {
             message.client.emit(Events.MessageCommandRun, message, command, { ...payload, args });
-            const config = await ConfigManager.getGuildConfig(message.guildId);
+            const commandConfig = await ConfigManager.getCommandConfig(message.guildId);
 
             const stopwatch = new Stopwatch();
             const result = await payload.command.messageRun(message, args, {
               commandName,
               commandPrefix,
               prefix,
-              config
+              commandConfig
             } as CharmieCommandGuildRunContext);
             const { duration } = stopwatch.stop();
 

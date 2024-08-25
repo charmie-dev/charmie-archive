@@ -5,8 +5,8 @@ import { Snowflake } from 'discord.js';
 import fs from 'node:fs';
 
 import { readYamlFile } from '../../utils';
-import { configSchema, GlobalConfig, globalConfigSchema, GuildConfig } from './schema';
-import { DEFAULT_GUILD_CONFIG } from '../../utils/constants';
+import { CommandConfig, commandSchema, GlobalConfig, globalConfigSchema } from './schema';
+import { DEFAULT_COMMANDS_CONFIG } from '../../utils/constants';
 
 import Logger, { AnsiColor } from '../../utils/logger';
 import GuildCache from '../../cache/GuildCache';
@@ -62,47 +62,35 @@ export default class ConfigManager {
   }
 
   /**
-   * Get the parsed configuration of a guild.
+   * Get the command configuration for a guild.
    *
-   * Warning: This method will return the default configuration if the guild configuration is (somehow) invalid.
+   * Warning: This method will return the default configuration if the command configuration is (somehow) invalid.
    *
-   * @param guildId - The ID of the guild
-   * @returns The guild configuration
+   * @param guildId The id of the guild
+   * @returns The parsed configuration
    */
 
-  static async getGuildConfig(guildId: Snowflake): Promise<GuildConfig> {
-    const { config } = await GuildCache.get(guildId);
+  static async getCommandConfig(guildId: Snowflake) {
+    const { command_config } = await GuildCache.get(guildId);
 
-    const parseResult = configSchema.safeParse(config);
+    const parseResult = commandSchema.safeParse(command_config);
 
-    if (!parseResult.success) return ConfigManager.getDefaultGuildConfig(guildId);
-    return parseResult.data as GuildConfig;
+    if (!parseResult.success) return ConfigManager.getDefaultCommandConfig(guildId);
+
+    return parseResult.data as CommandConfig;
   }
 
   /**
-   * Logs to the console that the default configuration was returned for a guild that does not have a valid config.
+   * Logs to the console that the default command configuration was returned for a guild that does not have a valid config.
    *
    * @param guildId The ID of the guild
-   * @returns The default guild configuration + a warning in the console.
+   * @returns The default command configuration + a warning in the console.
    */
 
-  static getDefaultGuildConfig(guildId: Snowflake): GuildConfig {
+  static getDefaultCommandConfig(guildId: Snowflake) {
     Logger.warn(
-      `Returned the default configuration for guild with ID ${guildId} as the configuration parsed from the database was invalid.`
+      `Returned the default command configuration for guild with ID ${guildId} as the command configuration parsed from the database was invalid.`
     );
-    return DEFAULT_GUILD_CONFIG;
-  }
-
-  /**
-   * Applies the default configuration to a guild.
-   *
-   * @param guildId The guild to apply y the default configuration to
-   * @returns The default guild configuration
-   */
-
-  static async resetGuildConfig(guildId: Snowflake) {
-    await container.db.guilds.update({ where: { id: guildId }, data: { config: DEFAULT_GUILD_CONFIG } });
-    Logger.warn(`Default configuration applied to guild ${guildId}.`);
-    return DEFAULT_GUILD_CONFIG;
+    return DEFAULT_COMMANDS_CONFIG;
   }
 }

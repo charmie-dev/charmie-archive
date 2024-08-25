@@ -15,10 +15,8 @@ export default class MessageCommandDenied extends Listener<typeof Events.Message
     let preserve = false;
 
     if (message.inGuild()) {
-      const config = await ConfigManager.getGuildConfig(message.guildId);
-
       const { preserveErrors, errorDeleteDelay, respondIfDisabled, respondIfNoPerms, respondIfDisabledInChannel } =
-        config.commands;
+        await ConfigManager.getCommandConfig(message.guildId);
 
       respond =
         identifier === PRECONDITION_IDENTIFIERS.CommandDisabled

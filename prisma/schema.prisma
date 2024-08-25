@@ -20,8 +20,17 @@ enum InfractionType {
 model Guilds {
   id String @id
 
-  // JSON object for storing configuration data for the guild
-  config Json
+  // Json for storing command configurations
+
+  command_config Json @default("{}")
+
+  // Json for storing infraction configurations
+
+  infraction_config Json @default("{}")
+
+  // Json for storing general configurations
+
+  general_config Json @default("{}")
 
   // Relation: Represents the guild's infractions
   infractions Infractions[]

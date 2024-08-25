@@ -1,8 +1,9 @@
 import { Guilds as Guild } from '@prisma/client';
-import { container } from '@sapphire/framework';
+import { container, LogLevel } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
-import { DEFAULT_GUILD_CONFIG } from '../utils/constants';
+import { DEFAULT_COMMANDS_CONFIG } from '../utils/constants';
+import Logger, { AnsiColor } from '../utils/logger';
 
 export default class GuildCache {
   /**
@@ -56,7 +57,7 @@ export default class GuildCache {
     const guild = await container.db.guilds.create({
       data: {
         id: guildId,
-        config: DEFAULT_GUILD_CONFIG
+        command_config: DEFAULT_COMMANDS_CONFIG
       }
     });
 
@@ -73,5 +74,15 @@ export default class GuildCache {
 
   public static wipeCache(guildId: string): boolean {
     return this.cache.delete(guildId);
+  }
+
+  /**
+   * Removes all guilds from the cache.
+   */
+
+  public static wipeAll(): void {
+    Logger.log('CACHE', 'Wiping all guilds from cache...', { color: AnsiColor.Yellow, full: true });
+    this.cache.clear();
+    Logger.log('CACHE', 'Guild cache wiped.', { color: AnsiColor.Green, full: true });
   }
 }

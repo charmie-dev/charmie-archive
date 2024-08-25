@@ -36,7 +36,7 @@ export default class Userinfo extends CharmieCommand {
       : (await args.pick('member').catch(() => null)) || (await args.pick('user').catch(() => null));
     if (!user) throw 'Invalid user.';
 
-    const { config } = context;
+    const { commandConfig } = context;
     const showUndos = args.getFlags('show-undos', 'show', 'u');
 
     const embed = new EmbedBuilder()
@@ -48,7 +48,7 @@ export default class Userinfo extends CharmieCommand {
       .setFields(this._formatFields(user))
       .setFooter({ text: `User ID: ${user.id}` });
 
-    if (permissionsCheck(message.member!, message.guild, config))
+    if (permissionsCheck(message.member!, message.guild, commandConfig))
       await this._getReceivedInfractions(embed, user.id, message.guildId, showUndos);
 
     return reply(message, { embeds: [embed] });

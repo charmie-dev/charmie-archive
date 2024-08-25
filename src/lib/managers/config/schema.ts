@@ -91,7 +91,7 @@ export type CommandAllowedChannel = z.infer<typeof allowedChannelSchema>;
  * The schema used for command configuration.
  */
 
-const commandSchema = z.object({
+export const commandSchema = z.object({
   prefix: z.string().default('>'),
   disabled: z.array(z.string()).default([]),
   delete: z.boolean().default(false),
@@ -105,17 +105,4 @@ const commandSchema = z.object({
   allowedChannels: z.array(allowedChannelSchema).default([])
 });
 
-/**
- * The guild configuration schema used for parsing/validation.
- */
-
-export const configSchema = z.object({
-  commands: commandSchema,
-  moderators: z.array(zSnowflake).default([])
-});
-
-/**
- * Exported type for all guild configurations.
- */
-
-export type GuildConfig = z.infer<typeof configSchema>;
+export type CommandConfig = z.infer<typeof commandSchema>;

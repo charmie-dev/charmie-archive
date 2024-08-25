@@ -41,7 +41,7 @@ export class CharmieClient extends SapphireClient {
 
       fetchPrefix: async (message: Message) => {
         return message.inGuild()
-          ? (await ConfigManager.getGuildConfig(message.guildId)).commands.prefix
+          ? (await ConfigManager.getCommandConfig(message.guildId)).prefix
           : ConfigManager.global_config.commands.prefix;
       },
 

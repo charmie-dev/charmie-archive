@@ -12,9 +12,7 @@ import {
 } from '@sapphire/framework';
 import { Awaitable, type Message as DJSMessage } from 'discord.js';
 
-import { GuildConfig } from '../managers/config/schema';
-import { parse } from 'yaml';
-
+import { CommandConfig } from '../managers/config/schema';
 export class CharmieCommand extends Command {
   /**
    * The usage examples for this command.
@@ -161,7 +159,7 @@ export interface CharmieCommandOptions extends Command.Options {
  */
 
 export interface CharmieCommandGuildRunContext extends MessageCommandContext {
-  config: GuildConfig;
+  commandConfig: CommandConfig;
 }
 
 /**

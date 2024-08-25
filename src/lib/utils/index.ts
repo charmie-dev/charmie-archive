@@ -19,14 +19,14 @@ import {
   cleanContent as djsCleanContent
 } from 'discord.js';
 
-import { Command, Container, container } from '@sapphire/framework';
+import { Container, container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
-import { GlobalConfig, GuildConfig } from '../managers/config/schema';
+import { CommandConfig, GlobalConfig } from '../managers/config/schema';
 import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './commands';
+import { CommandCategory } from '../charmie/Command';
 
 import Logger from './logger';
-import { CommandCategory } from '../charmie/Command';
 
 /**
  * This file contains utility functions that are used throughout the bot.
@@ -212,12 +212,11 @@ export async function sendOrReply(message: Message, content: string | MessageCre
  * @returns boolean Whether the member passed the permission checks
  */
 
-export function permissionsCheck(member: GuildMember, guild: Guild, config: GuildConfig): boolean {
+export function permissionsCheck(member: GuildMember, guild: Guild, config: CommandConfig): boolean {
   if (member.id === guild.ownerId) return true;
   if (member.permissions.any(COMMON_STAFF_PERMISSIONS, true)) return true;
-  if (config.moderators.some(role => member.roles.cache.has(role))) return true;
 
-  const { overrides } = config.commands;
+  const { overrides } = config;
   if (overrides.length === 0) return false;
 
   if (
