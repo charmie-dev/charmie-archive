@@ -18,10 +18,12 @@ import { permissionsCheck } from '../lib/utils';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Utility,
-  usage: '[user]',
+  usage: '[user] [--show-undos]',
   description: 'Get information about a user.',
   aliases: ['ui', 'whois'],
-  mappedFlags: [{ name: 'undos', aliases: ['u'] }]
+  requiredUserPermissions: PermissionFlagsBits.ModerateMembers,
+  mappedFlags: [{ name: 'show-undos', aliases: ['show', 'u'] }],
+  flags: ['show-undos', 'show', 'u']
 })
 export default class Userinfo extends CharmieCommand {
   public async messageRun(
@@ -35,7 +37,7 @@ export default class Userinfo extends CharmieCommand {
     if (!user) throw 'Invalid user.';
 
     const { config } = context;
-    const showUndos = args.getFlags('undos', 'u');
+    const showUndos = args.getFlags('show-undos', 'show', 'u');
 
     const embed = new EmbedBuilder()
       .setAuthor({

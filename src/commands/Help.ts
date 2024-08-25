@@ -11,6 +11,7 @@ import ConfigManager from '../lib/managers/config/ConfigManager';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Utility,
+  usage: '[command]',
   description: 'View all available commands or get help for a specific command.',
   preconditions: ['GuildOnly']
 })
@@ -76,7 +77,7 @@ export default class Help extends CharmieCommand {
       .setFooter({ text: `${isDeveloper ? combined : combined - devCommands} total commands.` });
 
     const fields = generateHelpFields(ConfigManager.global_config, message.author.id, this.container);
-    embed.addFields(fields);
+    embed.setFields(fields);
 
     return reply(message, { embeds: [embed] });
   }
@@ -91,42 +92,67 @@ export default class Help extends CharmieCommand {
   }
 
   private formatCommandEmbedFields(embed: EmbedBuilder, command: CharmieCommand, prefix: string): EmbedBuilder {
+    const { usage, aliases } = this._getUsageAndAliases(prefix, command);
+
+    if (usage) embed.addFields({ name: 'Usage', value: usage, inline: true });
+    if (aliases) embed.addFields({ name: 'Aliases', value: aliases, inline: true });
+
+    const { flags, options, permissions } = this._getAdditionalInfo(command);
+
+    if (flags || options || permissions)
+      embed.addFields({ name: 'Additional', value: this._formatAdditionalInfo(flags, options, permissions) });
+
+    return embed;
+  }
+
+  private _getAdditionalInfo(command: CharmieCommand): {
+    flags: string | null;
+    options: string | null;
+    permissions: string | null;
+  } {
+    let flags: string | null = null;
+    let options: string | null = null;
+    let permissions: string | null = null;
+
+    if (command.mappedFlags.length > 0)
+      flags = command.mappedFlags.map(flag => `\`${flag.name} (${flag.aliases.join(', ')})\``).join(', ');
+
+    if (command.mappedOptions.length > 0)
+      options = command.mappedOptions.map(option => `\`${option.name} (${option.aliases.join(', ')})\``).join(', ');
+
+    if (command.options.requiredUserPermissions)
+      permissions = new PermissionsBitField(command.options.requiredUserPermissions)
+        .toArray()
+        .map(permission => `\`${permission}\``)
+        .join('`, `')
+        .replace(/([a-z])([A-Z])/g, '$1 $2');
+
+    return { flags, options, permissions };
+  }
+
+  private _getUsageAndAliases(
+    prefix: string,
+    command: CharmieCommand
+  ): { usage: string | null; aliases: string | null } {
+    let usage: string | null = null;
+    let aliases: string | null = null;
+
     if (command.usage) {
       if (typeof command.usage === 'string') {
-        embed.addFields({ name: 'Usage', value: `\`${prefix}${command.name} ${command.usage}\`` });
+        usage = `\`${prefix}${command.name} ${command.usage}\``;
       } else if (Array.isArray(command.usage)) {
-        embed.addFields({
-          name: 'Usage',
-          value: `${command.usage.map(usage => `\`${prefix}${command.name} ${usage}\``).join('\n')}\n`
-        });
+        usage = command.usage.map(usage => `\`${prefix}${command.name} ${usage}\``).join('\n');
       }
     }
 
-    if (command.aliases.length > 0)
-      embed.addFields({ name: 'Aliases', value: `${command.aliases.map(a => `\`${a}\``).join(', ')}` });
+    if (command.aliases.length > 0) aliases = command.aliases.map(a => `\`${a}\``).join(', ');
 
-    if (command.options.requiredUserPermissions || command.mappedFlags.length > 0 || command.mappedOptions.length > 0)
-      embed.addFields({
-        name: 'Additional',
-        value: `${
-          command.options.requiredUserPermissions
-            ? `Permission(s): ${new PermissionsBitField(command.options.requiredUserPermissions)
-                .toArray()
-                .join('`, `')
-                .replace(/([a-z])([A-Z])/g, '$1 $2')}`
-            : ``
-        }${
-          command.mappedFlags.length > 0
-            ? `\nFlags: ${command.mappedFlags.map(flag => `\`${flag.name} (${flag.aliases.join(', ')})\``).join(', ')}`
-            : ``
-        }${
-          command.mappedOptions.length > 0
-            ? `\nOptions: ${command.mappedOptions
-                .map(option => `\`${option.name} (${option.aliases.join(', ')})\``)
-                .join(', ')}`
-            : ``
-        }`
-      });
-    return embed;
+    return { usage, aliases };
+  }
+
+  private _formatAdditionalInfo(flags: string | null, options: string | null, permissions: string | null): string {
+    return `${permissions ? `Permissions: ${permissions}` : ''}${flags ? `\nFlags: ${flags}` : ''}${
+      options ? `\nOptions: ${options}` : ''
+    }`;
   }
 }

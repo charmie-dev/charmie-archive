@@ -76,9 +76,6 @@ export class CharmieCommand extends Command {
     this.guarded = options.guarded ?? false;
     this.mappedFlags = options.mappedFlags ?? [];
     this.mappedOptions = options.mappedOptions ?? [];
-
-    this.parseMappedFlags(options.mappedFlags ?? []);
-    this.parseMappedOptions(options.mappedOptions ?? []);
   }
 
   /**
@@ -104,44 +101,6 @@ export class CharmieCommand extends Command {
 
   protected parseConstructorPreConditionsGuarded(options: CharmieCommandOptions) {
     if (options.guarded) this.preconditions.append('Guarded');
-  }
-
-  /**
-   * Parse the mapped flags into the command's flags array.
-   */
-
-  protected parseMappedFlags(flags: MappedFlag[]) {
-    if (!this.options.flags) {
-      this.options.flags = [];
-    }
-
-    const parsedFlagArray = this.options.flags as string[];
-
-    // Loop through each mapped flag and add it to the flags array
-
-    for (const flag of flags) {
-      parsedFlagArray.push(flag.name);
-      parsedFlagArray.push(...flag.aliases);
-    }
-  }
-
-  /**
-   * Parse the mapped options into the command's option array.
-   */
-
-  protected parseMappedOptions(options: MappedOption[]) {
-    if (!this.options.options) {
-      this.options.options = [];
-    }
-
-    const parsedOptionArray = this.options.options as string[];
-
-    // Loop through each mapped flag and add it to the flags array
-
-    for (const option of options) {
-      parsedOptionArray.push(option.name);
-      parsedOptionArray.push(...option.aliases);
-    }
   }
 
   /**

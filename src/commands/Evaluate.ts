@@ -7,7 +7,7 @@ import { createHastebinPaste } from '../lib/utils';
 
 import util from 'node:util';
 import ms from 'ms';
-import { EVAL_CMD_FLAGS, EVAL_CMD_OPTIONS } from '../lib/utils/commands';
+import { EVAL_CMD_MFLAGS, EVAL_CMD_MOPTIONS } from '../lib/utils/commands';
 
 let _;
 let output: any;
@@ -25,9 +25,11 @@ let timeTaken: number;
   guarded: true,
   description: 'Execute JavaScript code.',
   aliases: ['eval', 'e', 'ev', 'execute', 'exec'],
-  usage: ['<code>'],
-  mappedOptions: EVAL_CMD_OPTIONS,
-  mappedFlags: EVAL_CMD_FLAGS
+  usage: '<code> [--async] [--depth={depth}] [--silent] [--show] [--hide]',
+  mappedOptions: EVAL_CMD_MOPTIONS,
+  options: ['depth', 'd'],
+  mappedFlags: EVAL_CMD_MFLAGS,
+  flags: ['async', 'a', 'silent', 's', 'show', 'sh', 'hide', 'h']
 })
 export class Evaluate extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message, args: CharmieCommand.Args) {
@@ -56,7 +58,7 @@ export class Evaluate extends CharmieCommand {
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
 
     const roundtrip =
-      timeTaken < 1 ? `${Math.round(timeTaken * 1e6)} microseconds` : ms(Math.round(timeTaken), { long: true });
+      timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
     if (output.length > 1900) {
       const outBin = await createHastebinPaste(output);
