@@ -40,23 +40,23 @@ export default class Statistics extends CharmieCommand {
       .setFields([
         {
           name: 'Cache Information',
-          value: `\\- Guilds: \`${client.guilds.cache.size}\`\n\\- Users: \`${
+          value: `Guilds: \`${client.guilds.cache.size}\`\nUsers: \`${
             client.users.cache.size
-          }\`\n\\- Channels: \`${client.channels.cache.size}\`\n\\- Messages: \`${MessageCache.getQueueSize()}\``
+          }\`\nChannels: \`${client.channels.cache.size}\`\nMessages: \`${MessageCache.getQueueSize()}\``
         },
         {
           name: 'Process Information',
-          value: `\\- RSS Memory: \`${Math.floor(
+          value: `RSS Memory: \`${Math.floor(
             process.memoryUsage.rss() / 1024 / 1024
-          )} MB\`\n\\- Heap Memory: \`${Math.floor(
+          )} MB\`\nHeap Memory: \`${Math.floor(
             process.memoryUsage().heapUsed / 1024 / 1024
-          )} MB\`\n\\- Uptime: \`${ms(client.uptime!, { long: true })}\``
+          )} MB\`\nUptime: \`${ms(client.uptime!, { long: true })}\``
         },
         {
           name: 'Other Information',
-          value: `\\- Database Heartbeat: \`${Math.floor(
+          value: `Database Heartbeat: \`${Math.floor(
             dbQueryPing
-          )}ms\`\n\\- Database Size: \`${dbSizeInMB} MB\`\n\\- Client Heartbeat: \`${client.ws.ping}ms\``
+          )}ms\`\nDatabase Size: \`${dbSizeInMB} MB\`\nClient Heartbeat: \`${client.ws.ping}ms\``
         }
       ])
       .setTimestamp();
