@@ -15,7 +15,7 @@ export default class Reload extends CharmieCommand {
     const commandName = await args.pick('string').catch(() => null);
 
     if (!commandName) throw 'You must provide the name of a command to reload.';
-    if (commandName.toLowerCase() === 'reload') throw "Oh no you don't. You better not try this tomfoolery again.";
+    if (commandName.toLowerCase() === 'reload') throw 'No.';
 
     const command = this.container.stores.get('commands').get(commandName);
     if (!command) throw `That command does not exist.`;
