@@ -18,7 +18,7 @@ export default class Reload extends CharmieCommand {
     const command = this.container.stores.get('commands').get(commandName);
     if (!command) throw `That command does not exist.`;
 
-    await message.reply(`Reloading command \`${command.name}\`...`);
+    const replyToMeLater = await message.reply(`Reloading \`${command.name}\`...`);
 
     const start = performance.now();
     await command.reload();
@@ -26,6 +26,8 @@ export default class Reload extends CharmieCommand {
 
     const timeTaken = Math.floor(end - start);
 
-    return message.channel.send(`Reloaded command \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
+    return replyToMeLater.reply(`Reloaded in **${ms(timeTaken, { long: true })}**.`).catch(() => { 
+     return message.channel.send(`Reloaded \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
+    });
   }
 }
