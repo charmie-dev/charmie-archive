@@ -26,8 +26,8 @@ export default class Reload extends CharmieCommand {
 
     const timeTaken = Math.floor(end - start);
 
-    return replyToMeLater.reply(`Reloaded in **${ms(timeTaken, { long: true })}**.`).catch(() => { 
-     return message.channel.send(`Reloaded \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
+    return replyToMeLater.reply(`Reloaded in **${ms(timeTaken, { long: true })}**.`).catch(async () => { 
+     return await message.channel.send(`Reloaded \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
     });
   }
 }
