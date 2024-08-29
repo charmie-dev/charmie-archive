@@ -13,7 +13,9 @@ import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
 export default class Reload extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message, args: CharmieCommand.Args) {
     const commandName = await args.pick('string').catch(() => null);
+
     if (!commandName) throw 'You must provide the name of a command to reload.';
+    if (commandName.toLowerCase() === 'reload') throw 'Are you really trying to reload a command that reloads other commands?';
 
     const command = this.container.stores.get('commands').get(commandName);
     if (!command) throw `That command does not exist.`;
