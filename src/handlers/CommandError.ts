@@ -30,6 +30,8 @@ export default class MessageCommandError extends Listener<typeof Events.MessageC
    * @param error The error message to reply with
    * @param preserve Whether to preserve the message or not
    * @param delay The delay before deleting the message in milliseconds
+   *
+   * @returns void
    */
 
   public static async throw(
