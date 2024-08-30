@@ -34,7 +34,7 @@ let timeTaken: number;
 export class Evaluate extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message, args: CharmieCommand.Args) {
     const isAsync = args.getFlags('async', 'a');
-    const depth = parseInt(args.getOption('depth', 'd') ?? '1');
+    const depth = parseInt(args.getOption('depth', 'd') ?? '0');
     const silent = args.getFlags('silent', 's');
     const showHidden = args.getFlags('show', 'sh');
     let hide = args.getFlags('hide', 'h');
