@@ -13,7 +13,8 @@ import MessageCache from '../lib/cache/MessageCache';
   ctx: CommandCategory.Developer,
   guarded: true,
   description: "Get the bot's statistics.",
-  aliases: ['stats', 'health']
+  aliases: ['stats', 'health'],
+  preconditions: ['GuildOnly']
 })
 export default class Statistics extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message<true>) {
