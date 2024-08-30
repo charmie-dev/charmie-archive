@@ -2,12 +2,12 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { reply } from '@sapphire/plugin-editable-commands';
 
-import { CharmieCommand, CommandCategory, MappedFlag } from '../lib/charmie/Command';
-import { createHastebinPaste } from '../lib/utils';
+import { CharmieCommand, CommandCategory, MappedFlag } from '../managers/commands/Command';
+import { createHastebinPaste } from '../utils';
 
 import util from 'node:util';
 import ms from 'ms';
-import { EVAL_CMD_MFLAGS, EVAL_CMD_MOPTIONS } from '../lib/utils/commands';
+import { EVAL_CMD_MFLAGS, EVAL_CMD_MOPTIONS } from '../utils/constants';
 
 let _;
 let output: any;

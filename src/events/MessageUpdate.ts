@@ -2,9 +2,9 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { Message as DiscordMessage, PartialMessage } from 'discord.js';
 
-import { cleanContent } from '../lib/utils';
+import { cleanContent } from '../utils';
 
-import MessageCache from '../lib/cache/MessageCache';
+import MessageCache from '../managers/db/MessageCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageUpdate })
 export default class MessageUpdate extends Listener<typeof Events.MessageUpdate> {

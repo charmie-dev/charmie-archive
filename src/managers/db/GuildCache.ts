@@ -1,9 +1,9 @@
 import { Guilds as Guild } from '@prisma/client';
-import { container, LogLevel } from '@sapphire/framework';
+import { container } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
-import { DEFAULT_COMMANDS_CONFIG } from '../utils/constants';
-import Logger, { AnsiColor } from '../utils/logger';
+import { DEFAULT_COMMANDS_CONFIG } from '../../utils/constants';
+import Logger, { AnsiColor } from '../../utils/logger';
 
 export default class GuildCache {
   /**

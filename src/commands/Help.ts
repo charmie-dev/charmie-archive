@@ -3,11 +3,11 @@ import { UserOrMemberMentionRegex } from '@sapphire/discord.js-utilities';
 import { reply } from '@sapphire/plugin-editable-commands';
 import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 
-import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
-import { DEFAULT_EMBED_COLOR } from '../lib/utils/constants';
-import { generateHelpFields } from '../lib/utils';
+import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { DEFAULT_EMBED_COLOR } from '../utils/constants';
+import { generateHelpFields } from '../utils';
 
-import ConfigManager from '../lib/managers/config/ConfigManager';
+import ConfigManager from '../managers/config/ConfigManager';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Utility,

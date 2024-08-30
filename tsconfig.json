@@ -12,7 +12,6 @@
       "importHelpers": true,
       "experimentalDecorators": true,
       "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true,
 
       // Sentry stuff
       "sourceMap": true,

@@ -3,9 +3,13 @@ import { type Message, PermissionFlagsBits, PermissionsBitField } from 'discord.
 import { Stopwatch } from '@sapphire/stopwatch';
 import { isDMChannel } from '@sapphire/discord.js-utilities';
 
-import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from '../lib/charmie/Command';
+import {
+  CharmieCommandGuildRunContext,
+  CharmieCommandRunContext,
+  CharmieMessageCommand
+} from '../managers/commands/Command';
 
-import ConfigManager from '../lib/managers/config/ConfigManager';
+import ConfigManager from '../managers/config/ConfigManager';
 
 /**
  * The overriden message command listener from sapphire that runs after the message has been parsed. (This means no bots or webhooks.)

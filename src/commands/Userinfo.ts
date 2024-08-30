@@ -12,9 +12,9 @@ import {
 import { InfractionType } from '@prisma/client';
 import { reply } from '@sapphire/plugin-editable-commands';
 
-import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
-import { DEFAULT_EMBED_COLOR } from '../lib/utils/constants';
-import { permissionsCheck } from '../lib/utils';
+import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { DEFAULT_EMBED_COLOR } from '../utils/constants';
+import { permissionsCheck } from '../utils';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Utility,

@@ -4,38 +4,29 @@ import 'dotenv/config';
 import '@sapphire/plugin-editable-commands/register';
 import '@sapphire/framework';
 
-// Imports from libaries wrapped in {}
-
 import * as SentryClient from '@sentry/node';
 import { container } from '@sapphire/framework';
 
-// Imports from other files
+import { CharmieClient } from './utils/client';
+import { EXIT_EVENTS } from './utils/constants';
+import { ExtendedPrismaClient, ExtendedPrismaClientType } from './managers/db/Client';
 
-import { CharmieClient } from './lib/charmie/Client';
-import { ExtendedPrismaClient } from './lib/utils/prisma';
-import { ExtendedPrismaClientType } from './lib/types';
-import { EXIT_EVENTS } from './lib/utils/constants';
-
-// Other imports
-
-import Logger, { AnsiColor } from './lib/utils/logger';
-import ConfigManager from './lib/managers/config/ConfigManager';
-import CronUtils from './lib/utils/cron';
+import Logger, { AnsiColor } from './utils/logger';
+import CronUtils from './utils/cron';
+import ConfigManager from './managers/config/ConfigManager';
 
 /**
- * The main client class.
+ * The client class, an extension of the {@link https://sapphirejs.dev/docs/Documentation/api-framework/classes/SapphireClient SapphireClient }.
  *
- * It does not need to be exported as it's assigned to the #container {@link https://sapphirejs.dev/ Sapphire } exports.
- * @see {@link https://sapphirejs.dev/docs/Guide/additional-information/using-and-extending-container/ Sapphire Container}
+ * It does not need to be exported as it's assigned to the {@link https://sapphirejs.dev/docs/Guide/additional-information/using-and-extending-container/ container} that {@link https://sapphirejs.dev/ Sapphire } exports.
  */
 
 const client = new CharmieClient();
 
 /**
- * The main extended prisma client to support custom caching.
+ * The extended prisma client to support custom caching.
  *
- * It does not need to be exported as it's assigned to the #container {@link https://sapphirejs.dev/ Sapphire } exports.
- * @see {@link https://sapphirejs.dev/docs/Guide/additional-information/using-and-extending-container/ Sapphire Container}
+ * It does not need to be exported as it's assigned to the {@link https://sapphirejs.dev/docs/Guide/additional-information/using-and-extending-container/ container} that {@link https://sapphirejs.dev/ Sapphire } exports.
  */
 
 const prisma = ExtendedPrismaClient;
@@ -102,13 +93,15 @@ async function main() {
       throw new Error('Database connection could not be initialized. Aborting startup.');
     });
 
-  let ping = (Date.now() - start) / 2;
+  let ping = Date.now() - start;
 
   Logger.info(`Database connection took ${ping}ms.`);
 
+  // Assign the prisma client to the container
+
   container.db = prisma;
 
-  // Login
+  // Login the client
 
   await client.login(process.env.BOT_TOKEN);
 }

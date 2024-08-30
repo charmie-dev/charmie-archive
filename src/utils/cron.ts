@@ -2,11 +2,11 @@ import { CronJobParams } from '@sentry/node/build/types/cron/cron';
 import { CronJob } from 'cron';
 
 import { DEFAULT_TIMEZONE } from './constants';
-import { Sentry } from '../..';
+import { Sentry } from '..';
 import { terminateDbConnection } from '.';
 
 import Logger, { AnsiColor } from './logger';
-import MessageCache from '../cache/MessageCache';
+import MessageCache from '../managers/db/MessageCache';
 
 /**
  * The class responsible for handling/managing cron utilities.

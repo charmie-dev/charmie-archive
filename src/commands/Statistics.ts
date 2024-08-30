@@ -4,10 +4,10 @@ import { reply } from '@sapphire/plugin-editable-commands';
 
 import ms from 'ms';
 
-import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
-import { DEFAULT_EMBED_COLOR } from '../lib/utils/constants';
+import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { DEFAULT_EMBED_COLOR } from '../utils/constants';
 
-import MessageCache from '../lib/cache/MessageCache';
+import MessageCache from '../managers/db/MessageCache';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Developer,
@@ -41,17 +41,18 @@ export default class Statistics extends CharmieCommand {
       .setFields([
         {
           name: 'Cache Information',
-          value: `Guilds: \`${client.guilds.cache.size}\`\nUsers: \`${
-            client.users.cache.size
-          }\`\nChannels: \`${client.channels.cache.size}\`\nMessages: \`${MessageCache.getQueueSize()}\``
+          value: `Guilds: \`${client.guilds.cache.size}\`\nUsers: \`${client.users.cache.size}\`\nChannels: \`${
+            client.channels.cache.size
+          }\`\nMessages: \`${MessageCache.getQueueSize()}\``
         },
         {
           name: 'Process Information',
           value: `RSS Memory: \`${Math.floor(
             process.memoryUsage.rss() / 1024 / 1024
-          )} MB\`\nHeap Memory: \`${Math.floor(
-            process.memoryUsage().heapUsed / 1024 / 1024
-          )} MB\`\nUptime: \`${ms(client.uptime!, { long: true })}\``
+          )} MB\`\nHeap Memory: \`${Math.floor(process.memoryUsage().heapUsed / 1024 / 1024)} MB\`\nUptime: \`${ms(
+            client.uptime!,
+            { long: true }
+          )}\``
         },
         {
           name: 'Other Information',

@@ -2,10 +2,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, MessageCommandErrorPayload, UserError } from '@sapphire/framework';
 import { Colors, Message } from 'discord.js';
 
-import { sendOrReply } from '../../lib/utils';
-import { Sentry } from '../..';
+import { sendOrReply } from '../utils';
+import { Sentry } from '..';
 
-import Logger from '../../lib/utils/logger';
+import Logger from '../utils/logger';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCommandError })
 export default class MessageCommandError extends Listener<typeof Events.MessageCommandError> {

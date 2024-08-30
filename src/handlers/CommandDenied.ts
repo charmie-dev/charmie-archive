@@ -1,10 +1,10 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Identifiers, Listener, MessageCommandDeniedPayload, UserError } from '@sapphire/framework';
 
-import { PRECONDITION_IDENTIFIERS } from '../../lib/utils/constants';
+import { PRECONDITION_IDENTIFIERS } from '../utils/constants';
 
-import MessageCommandError from './MessageCommandError';
-import ConfigManager from '../../lib/managers/config/ConfigManager';
+import MessageCommandError from './CommandError';
+import ConfigManager from '../managers/config/ConfigManager';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCommandDenied })
 export default class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {

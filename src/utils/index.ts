@@ -23,8 +23,8 @@ import { Container, container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
 import { CommandConfig, GlobalConfig } from '../managers/config/schema';
-import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './commands';
-import { CommandCategory } from '../charmie/Command';
+import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './constants';
+import { CommandCategory } from '../managers/commands/Command';
 
 import Logger from './logger';
 

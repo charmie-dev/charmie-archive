@@ -1,6 +1,7 @@
 import { Colors, GatewayIntentBits, GuildMember, Options, Partials, PermissionFlagsBits, Sweepers } from 'discord.js';
 
 import { CommandConfig } from '../managers/config/schema';
+import { MappedFlag, MappedOption } from '../managers/commands/Command';
 
 /**
  * This file contains all the constants used throughout the bot.
@@ -128,6 +129,32 @@ export const LOG_ENTRY_DATE_FORMAT: Intl.DateTimeFormatOptions = {
   timeZone: DEFAULT_TIMEZONE,
   hour12: false
 };
+
+// ————————————————————————————————————————————————————————————————————————————————
+// Various command related utilities or constants
+// ————————————————————————————————————————————————————————————————————————————————
+
+export const EVAL_CMD_MFLAGS: MappedFlag[] = [
+  { name: 'async', aliases: ['a'] },
+  { name: 'silent', aliases: ['s'] },
+  { name: 'hide', aliases: ['h'] },
+  { name: 'show', aliases: ['sh'] }
+];
+
+export const EVAL_CMD_MOPTIONS: MappedOption[] = [{ name: 'depth', aliases: ['d'] }];
+
+export const COMMON_STAFF_PERMISSIONS = [
+  PermissionFlagsBits.Administrator,
+  PermissionFlagsBits.ManageGuild,
+  PermissionFlagsBits.ManageChannels,
+  PermissionFlagsBits.ManageRoles,
+  PermissionFlagsBits.ModerateMembers,
+  PermissionFlagsBits.BanMembers,
+  PermissionFlagsBits.KickMembers,
+  PermissionFlagsBits.ManageMessages
+];
+
+export const MODERATION_COMMANDS = ['warn', 'mute', 'kick', 'ban', 'unmute', 'unban'];
 
 export enum PRECONDITION_IDENTIFIERS {
   Silent = 'Silent',

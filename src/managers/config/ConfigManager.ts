@@ -1,5 +1,4 @@
 import { fromZodError } from 'zod-validation-error';
-import { container } from '@sapphire/framework';
 import { Snowflake } from 'discord.js';
 
 import fs from 'node:fs';
@@ -9,7 +8,7 @@ import { CommandConfig, commandSchema, GlobalConfig, globalConfigSchema } from '
 import { DEFAULT_COMMANDS_CONFIG } from '../../utils/constants';
 
 import Logger, { AnsiColor } from '../../utils/logger';
-import GuildCache from '../../cache/GuildCache';
+import GuildCache from '../db/GuildCache';
 
 /**
  * The config manager class.

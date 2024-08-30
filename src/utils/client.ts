@@ -1,9 +1,10 @@
-import { SapphireClient } from '@sapphire/framework';
+import { SapphireClient, Events } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
 import { type Message } from 'discord.js';
 import { join } from 'node:path';
 
-import { CLIENT_CACHE_OPTIONS, CLIENT_INTENTS, CLIENT_PARTIALS, CLIENT_SWEEPER_OPTIONS } from '../utils/constants';
+import { CLIENT_CACHE_OPTIONS, CLIENT_INTENTS, CLIENT_PARTIALS, CLIENT_SWEEPER_OPTIONS } from './constants';
+
 import ConfigManager from '../managers/config/ConfigManager';
 
 export class CharmieClient extends SapphireClient {
@@ -90,10 +91,33 @@ export class CharmieClient extends SapphireClient {
       }
     });
 
-    // Register custom folder paths for stores
+    /**
+     * We register a store for interaction handlers under the name "interactions" for ease of access.
+     */
 
     this.stores.get('interaction-handlers').registerPath(join(this.rootData.root, 'interactions'));
-    this.stores.get('listeners').registerPath(join(this.rootData.root, 'events'));
+
+    /**
+     * We register a store for preconditions under the name "conditions" for ease of access.
+     *
+     * This doesn't make much sense as they run before the command is executed... but it's fine
+     */
     this.stores.get('preconditions').registerPath(join(this.rootData.root, 'conditions'));
+
+    /**
+     * We register a second store for listeners that handle client events.
+     *
+     * E.g {@link Events.ClientReady}, which runs when the client has fully logged in
+     */
+
+    this.stores.get('listeners').registerPath(join(this.rootData.root, 'events'));
+
+    /**
+     * We register a third store for listeners that handle command related events.
+     *
+     * E.g {@link Events.PreMessageParsed}, which runs after the message has been parsed
+     */
+
+    this.stores.get('listeners').registerPath(join(this.rootData.root, 'handlers'));
   }
 }

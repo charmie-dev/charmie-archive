@@ -2,12 +2,12 @@ import { Messages as Message } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { Collection, Snowflake, Message as DiscordMessage, cleanContent, PartialMessage } from 'discord.js';
 
-import { EMPTY_MESSAGE_CONTENT, LOG_ENTRY_DATE_FORMAT, MESSAGE_DELETE_THRESHOLD } from '../utils/constants';
-import { pluralize } from '../utils';
+import { EMPTY_MESSAGE_CONTENT, LOG_ENTRY_DATE_FORMAT, MESSAGE_DELETE_THRESHOLD } from '../../utils/constants';
+import { pluralize } from '../../utils/index';
 
-import Logger from '../utils/logger';
-import ConfigManager from '../managers/config/ConfigManager';
-import CronUtils from '../utils/cron';
+import Logger from '../../utils/logger';
+import ConfigManager from '../config/ConfigManager';
+import CronUtils from '../../utils/cron';
 
 /**
  * The message caching system/class.

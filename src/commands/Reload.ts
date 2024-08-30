@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 
 import ms from 'ms';
 
-import { CharmieCommand, CommandCategory } from '../lib/charmie/Command';
+import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
 
 @ApplyOptions<CharmieCommand.Options>({
   ctx: CommandCategory.Developer,
@@ -28,8 +28,8 @@ export default class Reload extends CharmieCommand {
 
     const timeTaken = Math.floor(end - start);
 
-    return replyToMeLater.reply(`Reloaded in **${ms(timeTaken, { long: true })}**.`).catch(async () => { 
-     return await message.channel.send(`Reloaded \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
+    return replyToMeLater.reply(`Reloaded in **${ms(timeTaken, { long: true })}**.`).catch(async () => {
+      return await message.channel.send(`Reloaded \`${command.name}\` in **${ms(timeTaken, { long: true })}**.`);
     });
   }
 }

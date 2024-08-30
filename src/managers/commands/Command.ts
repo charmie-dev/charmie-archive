@@ -3,7 +3,6 @@ import {
   ApplicationCommandRegistry,
   Command,
   CommandJSON,
-  CommandOptions,
   CommandOptionsRunType,
   CommandRunInUnion,
   CommandSpecificRunIn,
@@ -12,7 +11,8 @@ import {
 } from '@sapphire/framework';
 import { Awaitable, type Message as DJSMessage } from 'discord.js';
 
-import { CommandConfig } from '../managers/config/schema';
+import { CommandConfig } from '../config/schema';
+
 export class CharmieCommand extends Command {
   /**
    * The usage examples for this command.
