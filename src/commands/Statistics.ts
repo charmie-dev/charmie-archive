@@ -58,8 +58,7 @@ export default class Statistics extends CharmieCommand {
             dbQueryPing
           )}ms\`\nDatabase Size: \`${dbSizeInMB} MB\`\nClient Heartbeat: \`${client.ws.ping}ms\``
         }
-      ])
-      .setTimestamp();
+      ]);
 
     return reply(message, { embeds: [embed] });
   }
