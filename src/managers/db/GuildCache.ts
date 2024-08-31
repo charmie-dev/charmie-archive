@@ -2,7 +2,6 @@ import { Guilds as Guild } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
-import { DEFAULT_COMMANDS_CONFIG } from '../../utils/constants';
 import Logger, { AnsiColor } from '../../utils/logger';
 
 export default class GuildCache {
@@ -55,10 +54,7 @@ export default class GuildCache {
 
   private static async _create(guildId: string): Promise<Guild> {
     const guild = await container.db.guilds.create({
-      data: {
-        id: guildId,
-        command_config: DEFAULT_COMMANDS_CONFIG
-      }
+      data: { id: guildId }
     });
 
     this.cache.set(guildId, guild);

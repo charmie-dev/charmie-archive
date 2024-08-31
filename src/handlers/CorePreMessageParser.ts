@@ -9,7 +9,8 @@ import {
   CharmieMessageCommand
 } from '../managers/commands/Command';
 
-import ConfigManager from '../managers/config/ConfigManager';
+import GuildCache from '../managers/db/GuildCache';
+import CommandManager from '../managers/commands/CommandManager';
 
 /**
  * The overriden message command listener from sapphire that runs after the message has been parsed. (This means no bots or webhooks.)
@@ -72,8 +73,7 @@ export default class CoreListener extends Listener<typeof Events.PreMessageParse
         .get(client.options.caseInsensitiveCommands ? commandName.toLowerCase() : commandName);
 
       if (!command) {
-        client.emit(Events.UnknownMessageCommand, { message, prefix, commandName, commandPrefix });
-        return;
+        return CommandManager.checkForCommands(message);
       }
 
       if (!command.messageRun) {
@@ -111,14 +111,14 @@ export default class CoreListener extends Listener<typeof Events.PreMessageParse
       const result = message.inGuild()
         ? await Result.fromAsync(async () => {
             message.client.emit(Events.MessageCommandRun, message, command, { ...payload, args });
-            const commandConfig = await ConfigManager.getCommandConfig(message.guildId);
+            const database_guild = await GuildCache.get(message.guildId);
 
             const stopwatch = new Stopwatch();
             const result = await payload.command.messageRun(message, args, {
               commandName,
               commandPrefix,
               prefix,
-              commandConfig
+              database_guild
             } as CharmieCommandGuildRunContext);
             const { duration } = stopwatch.stop();
 
