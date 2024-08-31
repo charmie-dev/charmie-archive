@@ -82,5 +82,5 @@ export class Evaluate extends CharmieCommand {
     if (!silent) return reply(message, msg);
   }
 
-  private readonly _filter = /this\.container\.db\.\w+\.(findUnique|update|findMany|delete|findFirst)/;
+  private readonly _filter = /(this\.container\.db\.\w+\.(findUnique|update|findMany|delete|findFirst)|process\.env(\.\w+)*|this\.container\.client\.token)/;
 }
