@@ -62,11 +62,13 @@ export class Evaluate extends CharmieCommand {
 
     if (output.length > 1900) {
       const outBin = await createHastebinPaste(hide && !showHidden ? 'hidden' : output);
+      const outBin = await createHastebinPaste(hide && !showHidden ? 'hidden' : output);
       const button = new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('View Here').setURL(outBin);
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
       if (!silent)
         return reply(message, {
+          content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
           content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
             error ? 'error' : type
           }\`\n**Time Taken:** \`${roundtrip}\``,

@@ -10,7 +10,7 @@ import GuildCache from '../managers/db/GuildCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCommandError })
 export default class MessageCommandError extends Listener<typeof Events.MessageCommandError> {
-  async run(uError: UserError, { message }: MessageCommandErrorPayload) {
+ run(uError: UserError, { message }: MessageCommandErrorPayload) {
     if (typeof uError !== 'string') {
       const sentryId = Sentry.captureException(uError);
       Logger.error(`Message command error: ${uError}`, uError);
