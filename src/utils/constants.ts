@@ -1,6 +1,13 @@
-import { Colors, GatewayIntentBits, GuildMember, Options, Partials, PermissionFlagsBits, Sweepers } from 'discord.js';
-
-import { CommandConfig } from '../managers/config/schema';
+import {
+  Colors,
+  GatewayIntentBits,
+  GuildMember,
+  Options,
+  Partials,
+  PermissionFlagsBits,
+  PermissionsBitField,
+  Sweepers
+} from 'discord.js';
 import { MappedFlag, MappedOption } from '../managers/commands/Command';
 
 /**
@@ -75,22 +82,37 @@ export const CLIENT_SWEEPER_OPTIONS = {
 };
 
 // ————————————————————————————————————————————————————————————————————————————————
-// Default configurations
+// Various command related utilities or constants
 // ————————————————————————————————————————————————————————————————————————————————
 
-export const DEFAULT_COMMANDS_CONFIG: CommandConfig = {
-  prefix: '>',
-  delete: false,
-  disabled: [],
-  respondIfNoPerms: true,
-  respondIfDisabled: true,
-  respondIfDisabledInChannel: true,
-  errorDeleteDelay: 7500,
-  preserveErrors: false,
-  moderatorPublic: false,
-  overrides: [],
-  allowedChannels: []
-};
+export const EVAL_CMD_MFLAGS: MappedFlag[] = [
+  { name: 'async', aliases: ['a'] },
+  { name: 'silent', aliases: ['s'] },
+  { name: 'hide', aliases: ['h'] },
+  { name: 'show', aliases: ['sh'] }
+];
+
+export const EVAL_CMD_MOPTIONS: MappedOption[] = [{ name: 'depth', aliases: ['d'] }];
+
+export const COMMON_STAFF_PERMISSIONS = [
+  PermissionFlagsBits.Administrator,
+  PermissionFlagsBits.ManageGuild,
+  PermissionFlagsBits.ManageChannels,
+  PermissionFlagsBits.ManageRoles,
+  PermissionFlagsBits.ModerateMembers,
+  PermissionFlagsBits.BanMembers,
+  PermissionFlagsBits.KickMembers,
+  PermissionFlagsBits.ManageMessages
+];
+
+export const MODERATION_COMMANDS = ['warn', 'mute', 'kick', 'ban', 'unmute', 'unban'];
+
+export enum PRECONDITION_IDENTIFIERS {
+  Silent = 'Silent',
+  CommandDisabled = 'CommandDisabled',
+  CommandDisabledInChannel = 'CommandDisabledInChannel',
+  NoPermissions = 'NoPermissions'
+}
 
 // ————————————————————————————————————————————————————————————————————————————————
 // Miscellaneous
@@ -130,35 +152,21 @@ export const LOG_ENTRY_DATE_FORMAT: Intl.DateTimeFormatOptions = {
   hour12: false
 };
 
-// ————————————————————————————————————————————————————————————————————————————————
-// Various command related utilities or constants
-// ————————————————————————————————————————————————————————————————————————————————
+export const DM_CHANNEL_PERMISSIONS = new PermissionsBitField(
+  ~new PermissionsBitField([
+    //
+    PermissionFlagsBits.AddReactions,
+    PermissionFlagsBits.AttachFiles,
+    PermissionFlagsBits.EmbedLinks,
+    PermissionFlagsBits.ReadMessageHistory,
+    PermissionFlagsBits.SendMessages,
+    PermissionFlagsBits.UseExternalEmojis,
+    PermissionFlagsBits.ViewChannel
+  ]).bitfield & PermissionsBitField.All
+).freeze();
 
-export const EVAL_CMD_MFLAGS: MappedFlag[] = [
-  { name: 'async', aliases: ['a'] },
-  { name: 'silent', aliases: ['s'] },
-  { name: 'hide', aliases: ['h'] },
-  { name: 'show', aliases: ['sh'] }
-];
-
-export const EVAL_CMD_MOPTIONS: MappedOption[] = [{ name: 'depth', aliases: ['d'] }];
-
-export const COMMON_STAFF_PERMISSIONS = [
-  PermissionFlagsBits.Administrator,
-  PermissionFlagsBits.ManageGuild,
-  PermissionFlagsBits.ManageChannels,
-  PermissionFlagsBits.ManageRoles,
-  PermissionFlagsBits.ModerateMembers,
-  PermissionFlagsBits.BanMembers,
-  PermissionFlagsBits.KickMembers,
-  PermissionFlagsBits.ManageMessages
-];
-
-export const MODERATION_COMMANDS = ['warn', 'mute', 'kick', 'ban', 'unmute', 'unban'];
-
-export enum PRECONDITION_IDENTIFIERS {
-  Silent = 'Silent',
-  CommandDisabled = 'CommandDisabled',
-  CommandDisabledInChannel = 'CommandDisabledInChannel',
-  NoPermissions = 'NoPermissions'
-}
+export const ERROR_MESSAGES = {
+  [PRECONDITION_IDENTIFIERS.CommandDisabled]: 'This command is disabled in this guild.',
+  [PRECONDITION_IDENTIFIERS.CommandDisabledInChannel]: 'This command is disabled in this channel.',
+  [PRECONDITION_IDENTIFIERS.NoPermissions]: 'You do not have the required permissions to execute this command.'
+};

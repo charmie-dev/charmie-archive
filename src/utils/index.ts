@@ -1,5 +1,3 @@
-import YAML from 'yaml';
-import fs from 'node:fs';
 import {
   ButtonInteraction,
   ChatInputCommandInteraction,
@@ -22,11 +20,16 @@ import {
 import { Container, container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
-import { CommandConfig, GlobalConfig } from '../managers/config/schema';
+import YAML from 'yaml';
+import fs from 'node:fs';
+import ms from 'ms';
+
+import { CommandRoleOverride, GlobalConfig } from '../managers/config/schema';
 import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './constants';
 import { CommandCategory } from '../managers/commands/Command';
 
 import Logger from './logger';
+import { Guilds as DatabaseGuild } from '@prisma/client';
 
 /**
  * This file contains utility functions that are used throughout the bot.
@@ -212,11 +215,11 @@ export async function sendOrReply(message: Message, content: string | MessageCre
  * @returns boolean Whether the member passed the permission checks
  */
 
-export function permissionsCheck(member: GuildMember, guild: Guild, config: CommandConfig): boolean {
+export function permissionsCheck(member: GuildMember, guild: Guild, config: DatabaseGuild): boolean {
   if (member.id === guild.ownerId) return true;
   if (member.permissions.any(COMMON_STAFF_PERMISSIONS, true)) return true;
 
-  const { overrides } = config;
+  const overrides = config.msgCmdsRoleOverrides as CommandRoleOverride[];
   if (overrides.length === 0) return false;
 
   if (
@@ -262,4 +265,46 @@ export function generateHelpFields(config: GlobalConfig, authorId: string, conta
 
     return fields;
   });
+}
+
+/**
+ * Capitalize the first letter of a string.
+ *
+ * @param str The string to capitalize
+ * @returns The capitalized string
+ */
+
+export function capitalize(str: string): string {
+  if (str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Parse a duration string into a number of milliseconds.
+ *
+ * @param durationStr The duration string to parse
+ * @returns The duration in milliseconds
+ */
+
+export function parseDuration(durationStr: string | null): number {
+  if (durationStr === null) return NaN;
+
+  const numericValue = Number(durationStr);
+
+  if (!isNaN(numericValue)) return numericValue * 1000;
+  return ms(durationStr) ?? NaN;
+}
+
+/**
+ * Check if a member has a higher role than another member.
+ *
+ * @param executor The executor
+ * @param target The target
+ * @returns boolean (Whether the executor has a higher role than the target)
+ */
+
+export function hierarchyCheck(executor: GuildMember, target: GuildMember): boolean {
+  if (executor.guild.ownerId === executor.id) return true;
+  if (target.guild.ownerId === target.id) return false;
+  return executor.roles.highest.comparePositionTo(executor.roles.highest) > 0;
 }

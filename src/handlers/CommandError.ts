@@ -6,6 +6,7 @@ import { sendOrReply } from '../utils';
 import { Sentry } from '..';
 
 import Logger from '../utils/logger';
+import GuildCache from '../managers/db/GuildCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCommandError })
 export default class MessageCommandError extends Listener<typeof Events.MessageCommandError> {
@@ -18,6 +19,11 @@ export default class MessageCommandError extends Listener<typeof Events.MessageC
         `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`,
         true
       );
+    }
+
+    if (message.inGuild()) {
+      const { msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay } = await GuildCache.get(message.guildId);
+      return MessageCommandError.throw(message, uError, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
     }
 
     return MessageCommandError.throw(message, uError);

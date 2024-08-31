@@ -17,7 +17,7 @@ import { DEFAULT_EMBED_COLOR } from '../utils/constants';
 import { permissionsCheck } from '../utils';
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Utility,
+  category: CommandCategory.Utility,
   usage: '[user] [--show-undos]',
   description: 'Get information about a user.',
   aliases: ['ui', 'whois'],
@@ -36,7 +36,6 @@ export default class Userinfo extends CharmieCommand {
       : (await args.pick('member').catch(() => null)) || (await args.pick('user').catch(() => null));
     if (!user) throw 'Invalid user.';
 
-    const { commandConfig } = context;
     const showUndos = args.getFlags('show-undos', 'show', 'u');
 
     const embed = new EmbedBuilder()
@@ -48,7 +47,7 @@ export default class Userinfo extends CharmieCommand {
       .setFields(this._formatFields(user))
       .setFooter({ text: `User ID: ${user.id}` });
 
-    if (permissionsCheck(message.member!, message.guild, commandConfig))
+    if (permissionsCheck(message.member!, message.guild, context.database_guild))
       await this._getReceivedInfractions(embed, user.id, message.guildId, showUndos);
 
     return reply(message, { embeds: [embed] });

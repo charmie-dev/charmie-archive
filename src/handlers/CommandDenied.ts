@@ -4,7 +4,7 @@ import { Events, Identifiers, Listener, MessageCommandDeniedPayload, UserError }
 import { PRECONDITION_IDENTIFIERS } from '../utils/constants';
 
 import MessageCommandError from './CommandError';
-import ConfigManager from '../managers/config/ConfigManager';
+import GuildCache from '../managers/db/GuildCache';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCommandDenied })
 export default class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
@@ -15,18 +15,23 @@ export default class MessageCommandDenied extends Listener<typeof Events.Message
     let preserve = false;
 
     if (message.inGuild()) {
-      const { preserveErrors, errorDeleteDelay, respondIfDisabled, respondIfNoPerms, respondIfDisabledInChannel } =
-        await ConfigManager.getCommandConfig(message.guildId);
+      const {
+        msgCmdsPreserveErrors,
+        msgCmdsErrorDeleteDelay,
+        msgCmdsRespondIfDisabled,
+        msgCmdsRespondIfNoPerms,
+        msgCmdsRespondIfNotAllowed
+      } = await GuildCache.get(message.guildId);
 
       respond =
         identifier === PRECONDITION_IDENTIFIERS.CommandDisabled
-          ? respondIfDisabled
+          ? msgCmdsRespondIfDisabled
           : identifier === PRECONDITION_IDENTIFIERS.CommandDisabledInChannel
-          ? respondIfDisabledInChannel
-          : respondIfNoPerms;
+          ? msgCmdsRespondIfNotAllowed
+          : msgCmdsRespondIfNoPerms;
 
       if (!respond) return message.delete().catch(() => {});
-      return MessageCommandError.throw(message, eMsg, preserveErrors, errorDeleteDelay);
+      return MessageCommandError.throw(message, eMsg, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
     }
 
     preserve = identifier === Identifiers.PreconditionClientPermissions;

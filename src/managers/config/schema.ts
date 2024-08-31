@@ -55,7 +55,7 @@ export type GlobalConfig = z.infer<typeof globalConfigSchema>;
 // Guild Configuration
 // ————————————————————————————————————————————————————————————————————————————————
 
-const overrideSchema = z.object({
+const roleOverrideSchema = z.object({
   id: zSnowflake,
   commands: z.array(z.string()).default([]),
   excluded: z.array(zSnowflake).default([])
@@ -69,9 +69,9 @@ const overrideSchema = z.object({
  * @remarks The `excluded` array contains the IDs of roles that are excluded from this override. Users that have any of these roles will be excluded from this override even if they have the primary role.
  */
 
-export type CommandOverride = z.infer<typeof overrideSchema>;
+export type CommandRoleOverride = z.infer<typeof roleOverrideSchema>;
 
-const allowedChannelSchema = z.object({
+const channelOverrideSchema = z.object({
   id: zSnowflake,
   roles: z.array(zSnowflake).default([]),
   commands: z.array(z.string())
@@ -85,24 +85,4 @@ const allowedChannelSchema = z.object({
  * @remarks The `commands` array is an array that contains the names of commands that are allowed in the channel.
  */
 
-export type CommandAllowedChannel = z.infer<typeof allowedChannelSchema>;
-
-/**
- * The schema used for command configuration.
- */
-
-export const commandSchema = z.object({
-  prefix: z.string().default('>'),
-  disabled: z.array(z.string()).default([]),
-  delete: z.boolean().default(false),
-  respondIfNoPerms: z.boolean().default(true),
-  respondIfDisabled: z.boolean().default(true),
-  respondIfDisabledInChannel: z.boolean().default(true),
-  preserveErrors: z.boolean().default(false),
-  errorDeleteDelay: z.number().default(7500),
-  moderatorPublic: z.boolean().default(false),
-  overrides: z.array(overrideSchema).default([]),
-  allowedChannels: z.array(allowedChannelSchema).default([])
-});
-
-export type CommandConfig = z.infer<typeof commandSchema>;
+export type CommandChannelOverride = z.infer<typeof channelOverrideSchema>;

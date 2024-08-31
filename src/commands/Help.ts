@@ -10,7 +10,7 @@ import { generateHelpFields } from '../utils';
 import ConfigManager from '../managers/config/ConfigManager';
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Utility,
+  category: CommandCategory.Utility,
   usage: '[command]',
   description: 'View all available commands or get help for a specific command.',
   preconditions: ['GuildOnly']

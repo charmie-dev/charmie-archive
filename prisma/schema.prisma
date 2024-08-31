@@ -20,20 +20,31 @@ enum InfractionType {
 model Guilds {
   id String @id
 
-  // Json for storing command configurations
+  // Command configurations
 
-  command_config Json @default("{}")
+  msgCmdsPrefix              String   @default(">")
+  msgCmdsAutoDelete          Boolean  @default(true)
+  msgCmdsRespondIfNoPerms    Boolean  @default(true)
+  msgCmdsRespondIfNotAllowed Boolean  @default(true)
+  msgCmdsRespondIfDisabled   Boolean  @default(true)
+  msgCmdsDisabledList        String[]
+  msgCmdsPreserveErrors      Boolean  @default(false)
+  msgCmdsErrorDeleteDelay    Int      @default(7500)
+  msgCmdsRoleOverrides       Json[]
+  msgCmdsChannelOverrides    Json[]
+  msgCmdsShowExecutor        Boolean  @default(false)
 
-  // Json for storing infraction configurations
+  // Infraction configurations
 
-  infraction_config Json @default("{}")
-
-  // Json for storing general configurations
-
-  general_config Json @default("{}")
+  requireInfractionReason Boolean @default(true)
+  defaultWarningDuration  BigInt  @default(0)
 
   // Relation: Represents the guild's infractions
   infractions Infractions[]
+  // Relation: Represents the guild's messages
+  messages    Messages[]
+  // Relation: Represents the guild's commands (shortcuts)
+  commands    Commands[]
 }
 
 model Infractions {
@@ -78,4 +89,31 @@ model Messages {
   stickerId   String?
   /// ID of the message this message is replying to (if any)
   referenceId String?
+
+  guild Guilds @relation(fields: [guildId], references: [id])
+}
+
+model Commands {
+  // The ID of the command
+  id          Int            @default(autoincrement())
+  // The guild the command is in
+  guildId     String
+  // Whether the command is enabled or not
+  enabled     Boolean        @default(true)
+  // The name of the command
+  name        String
+  // The description of the command
+  description String
+  // The punishment of the command
+  punishment  InfractionType
+  // The reason for the punishment
+  reason      String
+  // The duration of the punishment
+  duration    BigInt?
+  // The amount of messages to delete upon ban
+  deleteTime  Int?
+
+  guild Guilds @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, name])
 }

@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { CLIENT_CACHE_OPTIONS, CLIENT_INTENTS, CLIENT_PARTIALS, CLIENT_SWEEPER_OPTIONS } from './constants';
 
 import ConfigManager from '../managers/config/ConfigManager';
+import GuildCache from '../managers/db/GuildCache';
 
 export class CharmieClient extends SapphireClient {
   // Root data
@@ -42,7 +43,7 @@ export class CharmieClient extends SapphireClient {
 
       fetchPrefix: async (message: Message) => {
         return message.inGuild()
-          ? (await ConfigManager.getCommandConfig(message.guildId)).prefix
+          ? (await GuildCache.get(message.guildId)).msgCmdsPrefix
           : ConfigManager.global_config.commands.prefix;
       },
 

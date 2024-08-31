@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 import { CharmieClient } from './utils/client';
 import { EXIT_EVENTS } from './utils/constants';
-import { ExtendedPrismaClient, ExtendedPrismaClientType } from './managers/db/Client';
+import { ExtendedPrismaClient, ExtendedPrismaClientType } from './managers/db/ExtenedClient';
 
 import Logger, { AnsiColor } from './utils/logger';
 import CronUtils from './utils/cron';

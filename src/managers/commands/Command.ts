@@ -1,3 +1,4 @@
+import { Guilds as DatabaseGuild } from '@prisma/client';
 import {
   AliasPiece,
   ApplicationCommandRegistry,
@@ -10,8 +11,6 @@ import {
   Args as SapphireArgs
 } from '@sapphire/framework';
 import { Awaitable, type Message as DJSMessage } from 'discord.js';
-
-import { CommandConfig } from '../config/schema';
 
 export class CharmieCommand extends Command {
   /**
@@ -69,8 +68,8 @@ export class CharmieCommand extends Command {
     super(context, options);
 
     this.usage = options.usage ?? null;
-    this.ctx = options.ctx ? options.ctx : null;
-    this.fullCategory = options.ctx ? [options.ctx] : [];
+    this.ctx = options.category ? options.category : null;
+    this.fullCategory = options.category ? [options.category] : [];
     this.guarded = options.guarded ?? false;
     this.mappedFlags = options.mappedFlags ?? [];
     this.mappedOptions = options.mappedOptions ?? [];
@@ -102,6 +101,17 @@ export class CharmieCommand extends Command {
   }
 
   /**
+   * The method that parses the guildOnly precondition.
+   * It appends the GuildOnly precondition to the preconditions array if the command is in the Moderation category.
+   *
+   * @param options The options of the command.
+   */
+
+  protected parseConstructorPreConditionsGuildOnly(options: CharmieCommandOptions) {
+    if (options.category && options.category === CommandCategory.Moderation) this.preconditions.append('GuildOnly');
+  }
+
+  /**
    * The overriden method that retrieves the command's category.
    * It returns options.ctx instead of options.fullCategory as command categories can only be a single string.
    *
@@ -127,7 +137,7 @@ export interface CharmieCommandOptions extends Command.Options {
    * The category this command belongs to.
    */
 
-  readonly ctx?: string | null;
+  readonly category?: string | null;
 
   /**
    * The usage examples for this command.
@@ -159,7 +169,7 @@ export interface CharmieCommandOptions extends Command.Options {
  */
 
 export interface CharmieCommandGuildRunContext extends MessageCommandContext {
-  commandConfig: CommandConfig;
+  database_guild: DatabaseGuild;
 }
 
 /**
@@ -181,6 +191,7 @@ export type CharmieMessageCommand = Command & Required<Pick<CharmieCommand, 'mes
 
 export enum CommandCategory {
   Developer = 'Developer',
+  Moderation = 'Moderation',
   Utility = 'Utility'
 }
 

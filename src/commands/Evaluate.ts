@@ -21,7 +21,7 @@ let timeTaken: number;
  */
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Developer,
+  category: CommandCategory.Developer,
   guarded: true,
   description: 'Execute JavaScript code.',
   aliases: ['eval', 'e', 'ev', 'execute', 'exec'],
@@ -61,13 +61,13 @@ export class Evaluate extends CharmieCommand {
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
     if (output.length > 1900) {
-      const outBin = await createHastebinPaste(output);
+      const outBin = await createHastebinPaste(hide && !showHidden ? 'hidden' : output);
       const button = new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('View Here').setURL(outBin);
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
       if (!silent)
         return reply(message, {
-          content: `The output cannot be displayed via discord.\n**Return Type:** \`${
+          content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
             error ? 'error' : type
           }\`\n**Time Taken:** \`${roundtrip}\``,
           components: [row]
@@ -82,5 +82,6 @@ export class Evaluate extends CharmieCommand {
     if (!silent) return reply(message, msg);
   }
 
-  private readonly _filter = /this\.container\.db\.\w+\.(findUnique|update|findMany|delete|findFirst)/;
+  private readonly _filter =
+    /(this\.container\.db\.\w+\.(findUnique|update|findMany|delete|findFirst)|process\.env(\.\w+)*|this\.container\.client\.token)/;
 }

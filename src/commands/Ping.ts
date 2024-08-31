@@ -11,7 +11,7 @@ import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
  */
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Utility,
+  category: CommandCategory.Utility,
   description: `Get the websocket heartbeat and roundtrip latency.`,
   aliases: ['pong', 'latency', 'heartbeat']
 })

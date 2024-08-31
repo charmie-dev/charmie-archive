@@ -1,15 +1,11 @@
 import { fromZodError } from 'zod-validation-error';
-import { Snowflake } from 'discord.js';
 
 import fs from 'node:fs';
 
 import { readYamlFile } from '../../utils';
-import { CommandConfig, commandSchema, GlobalConfig, globalConfigSchema } from './schema';
-import { DEFAULT_COMMANDS_CONFIG } from '../../utils/constants';
+import { GlobalConfig, globalConfigSchema } from './schema';
 
 import Logger, { AnsiColor } from '../../utils/logger';
-import GuildCache from '../db/GuildCache';
-
 /**
  * The config manager class.
  *
@@ -58,38 +54,5 @@ export default class ConfigManager {
     }
 
     return parseResult.data;
-  }
-
-  /**
-   * Get the command configuration for a guild.
-   *
-   * Warning: This method will return the default configuration if the command configuration is (somehow) invalid.
-   *
-   * @param guildId The id of the guild
-   * @returns The parsed configuration
-   */
-
-  static async getCommandConfig(guildId: Snowflake) {
-    const { command_config } = await GuildCache.get(guildId);
-
-    const parseResult = commandSchema.safeParse(command_config);
-
-    if (!parseResult.success) return ConfigManager.getDefaultCommandConfig(guildId);
-
-    return parseResult.data as CommandConfig;
-  }
-
-  /**
-   * Logs to the console that the default command configuration was returned for a guild that does not have a valid config.
-   *
-   * @param guildId The ID of the guild
-   * @returns The default command configuration + a warning in the console.
-   */
-
-  static getDefaultCommandConfig(guildId: Snowflake) {
-    Logger.warn(
-      `Returned the default command configuration for guild with ID ${guildId} as the command configuration parsed from the database was invalid.`
-    );
-    return DEFAULT_COMMANDS_CONFIG;
   }
 }

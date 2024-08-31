@@ -10,7 +10,7 @@ import { DEFAULT_EMBED_COLOR } from '../utils/constants';
 import MessageCache from '../managers/db/MessageCache';
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Developer,
+  category: CommandCategory.Developer,
   guarded: true,
   description: "Get the bot's statistics.",
   aliases: ['stats', 'health'],

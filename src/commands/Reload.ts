@@ -5,7 +5,7 @@ import ms from 'ms';
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
 
 @ApplyOptions<CharmieCommand.Options>({
-  ctx: CommandCategory.Developer,
+  category: CommandCategory.Developer,
   guarded: true,
   description: 'Reload a specific command.',
   usage: '<command>'
