@@ -29,14 +29,14 @@ let timeTaken: number;
   mappedOptions: EVAL_CMD_MOPTIONS,
   options: ['depth', 'd'],
   mappedFlags: EVAL_CMD_MFLAGS,
-  flags: ['async', 'a', 'silent', 's', 'show', 'sh', 'hide', 'h']
+  flags: ['async', 'a', 'silent', 's', 'show-hidden', 'show', 'sh', 'hide', 'h']
 })
 export class Evaluate extends CharmieCommand {
   public async messageRun(message: CharmieCommand.Message, args: CharmieCommand.Args) {
     const isAsync = args.getFlags('async', 'a');
     const depth = parseInt(args.getOption('depth', 'd') ?? '0');
     const silent = args.getFlags('silent', 's');
-    const showHidden = args.getFlags('show', 'sh');
+    const showHidden = args.getFlags('show-hidden', 'show', 'sh');
     let hide = args.getFlags('hide', 'h');
 
     const code = await args.rest('string').catch(() => null);
@@ -61,14 +61,18 @@ export class Evaluate extends CharmieCommand {
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
     if (output.length > 1900) {
-      const outBin = await createHastebinPaste(hide && !showHidden ? 'hidden' : output);
-      const outBin = await createHastebinPaste(hide && !showHidden ? 'hidden' : output);
+      const outBin = await createHastebinPaste(
+        hide && !showHidden
+          ? `The output was hidden ${
+              args.getFlags('hide', 'h') ? 'because you provided the --hide flag' : 'automatically'
+            }.\nTo view the full output run the command again but include the --show flag.`
+          : output
+      );
       const button = new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('View Here').setURL(outBin);
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
       if (!silent)
         return reply(message, {
-          content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
           content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
             error ? 'error' : type
           }\`\n**Time Taken:** \`${roundtrip}\``,

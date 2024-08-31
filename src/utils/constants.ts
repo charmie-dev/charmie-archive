@@ -89,7 +89,7 @@ export const EVAL_CMD_MFLAGS: MappedFlag[] = [
   { name: 'async', aliases: ['a'] },
   { name: 'silent', aliases: ['s'] },
   { name: 'hide', aliases: ['h'] },
-  { name: 'show', aliases: ['sh'] }
+  { name: 'show-hidden', aliases: ['show', 'sh'] }
 ];
 
 export const EVAL_CMD_MOPTIONS: MappedOption[] = [{ name: 'depth', aliases: ['d'] }];
