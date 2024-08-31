@@ -81,7 +81,7 @@ export default class Warn extends CharmieCommand {
     return send(message, {
       embeds: [
         {
-          description: `Warning \`#${infraction.id}\` issued for ${target.toString()} (\`${target.id}\`)`,
+          description: `${target.toString()} has been **warned** with ID \`${infraction.id}\``,
           color: INFRACTION_COLORS.Warn
         }
       ]
