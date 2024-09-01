@@ -41,7 +41,8 @@ export const globalConfigSchema = z.object({
       delete_cron: zCron,
       // How long messages should be stored for (in milliseconds) - Default: 7 days
       ttl: z.number().min(1000).default(604800000)
-    })
+    }),
+    config_cache_delete_cron: zCron
   }),
   commands: z.object({
     prefix: z.string().default('>')

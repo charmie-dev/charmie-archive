@@ -84,7 +84,7 @@ async function main() {
   await prisma
     .$connect()
     .then(() => {
-      Logger.log('DATABASE', 'Successfully connected to database.', {
+      Logger.log('DATABASE', `Successfully connected to database in ${Date.now() - start}ms.`, {
         color: AnsiColor.Green,
         full: true
       });
@@ -92,10 +92,6 @@ async function main() {
     .catch(() => {
       throw new Error('Database connection could not be initialized. Aborting startup.');
     });
-
-  let ping = Date.now() - start;
-
-  Logger.info(`Database connection took ${ping}ms.`);
 
   // Assign the prisma client to the container
 

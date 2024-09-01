@@ -3,6 +3,8 @@ import { container } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
 import Logger, { AnsiColor } from '../../utils/logger';
+import CronUtils from '../../utils/cron';
+import ConfigManager from '../config/ConfigManager';
 
 export default class GuildCache {
   /**
@@ -77,8 +79,18 @@ export default class GuildCache {
    */
 
   public static wipeAll(): void {
-    Logger.log('CACHE', 'Wiping all guilds from cache...', { color: AnsiColor.Yellow, full: true });
-    this.cache.clear();
-    Logger.log('CACHE', 'Guild cache wiped.', { color: AnsiColor.Green, full: true });
+    return this.cache.clear();
+  }
+
+  /**
+   * Starts a cron job that removes all guilds from the cache.
+   */
+
+  public static startCleanupCronJob(): void {
+    const { config_cache_delete_cron } = ConfigManager.global_config.database;
+
+    CronUtils.startJob('DELETE_GUILD_CACHE', config_cache_delete_cron, () => {
+      GuildCache.wipeAll();
+    });
   }
 }

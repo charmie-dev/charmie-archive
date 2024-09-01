@@ -273,7 +273,7 @@ export default class MessageCache {
     const ttl = ConfigManager.global_config.database.messages.ttl;
 
     // Store cached messages
-    CronUtils.startJob('STORE_MESSAGES', insertionCron, async () => {
+    CronUtils.startJob('STORE_NEW_MESSAGES', insertionCron, async () => {
       await MessageCache.store();
     });
 

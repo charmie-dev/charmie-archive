@@ -39,13 +39,13 @@ export default class CronUtils {
         timeZone: DEFAULT_TIMEZONE,
         onTick: async () => {
           Logger.log(monitorSlug, 'Running cron job...', {
-            color: AnsiColor.Orange
+            color: AnsiColor.Cyan
           });
 
           await onTick();
 
           Logger.log(monitorSlug, 'Successfully ran cron job', {
-            color: AnsiColor.Orange
+            color: AnsiColor.Green
           });
         }
       })
