@@ -73,17 +73,15 @@ export class Evaluate extends CharmieCommand {
 
       if (!silent)
         return reply(message, {
-          content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${
-            error ? 'error' : type
-          }\`\n**Time Taken:** \`${roundtrip}\``,
+          content: `The output cannot be displayed via discord.\n\n**Return Type:** \`${type}\`\n**Time Taken:** \`${roundtrip}\``,
           components: [row]
         });
     }
 
-    const displayedOutput = error ? output : hide && !showHidden ? 'hidden' : output;
-    const msg = `**Output:**\n\`\`\`ts\n${displayedOutput}\n\`\`\`\n**Return Type:** \`${
-      error ? 'error' : type
-    }\`\n**Time Taken:** \`${roundtrip}\``;
+    const displayedOutput = hide ? (showHidden ? output : 'Hidden') : output;
+    const msg = `**${
+      error ? 'Error ' : ''
+    }Output:**\n\`\`\`ts\n${displayedOutput}\n\`\`\`\n**Return Type:** \`${type}\`\n**Time Taken:** \`${roundtrip}\``;
 
     if (!silent) return reply(message, msg);
   }
