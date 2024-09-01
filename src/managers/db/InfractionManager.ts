@@ -18,7 +18,15 @@ export default class InfractionManager {
     });
   }
 
-  public static async deleteInfraction(where: Prisma.InfractionsDeleteArgs['where']): Promise<number> {
+  public static async deleteInfraction(
+    where: Prisma.InfractionsDeleteArgs['where']
+  ): Promise<DatabaseInfraction | null> {
+    return await container.db.infractions.delete({
+      where
+    });
+  }
+
+  public static async deleteAllInfractions(where: Prisma.InfractionsDeleteArgs['where']): Promise<number> {
     const { count } = await container.db.infractions.deleteMany({
       where
     });
