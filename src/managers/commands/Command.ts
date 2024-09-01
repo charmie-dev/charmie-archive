@@ -108,7 +108,11 @@ export class CharmieCommand extends Command {
    */
 
   protected parseConstructorPreConditionsGuildOnly(options: CharmieCommandOptions) {
-    if (options.category && options.category === CommandCategory.Moderation) this.preconditions.append('GuildOnly');
+    if (
+      (options.category && options.category === CommandCategory.Moderation) ||
+      options.category === CommandCategory.Management
+    )
+      this.preconditions.append('GuildOnly');
   }
 
   /**
@@ -169,7 +173,7 @@ export interface CharmieCommandOptions extends Command.Options {
  */
 
 export interface CharmieCommandGuildRunContext extends MessageCommandContext {
-  database_guild: DatabaseGuild;
+  config: DatabaseGuild;
 }
 
 /**
@@ -191,6 +195,7 @@ export type CharmieMessageCommand = Command & Required<Pick<CharmieCommand, 'mes
 
 export enum CommandCategory {
   Developer = 'Developer',
+  Management = 'Management',
   Moderation = 'Moderation',
   Utility = 'Utility'
 }

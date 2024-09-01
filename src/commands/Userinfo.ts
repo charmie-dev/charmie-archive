@@ -47,7 +47,7 @@ export default class Userinfo extends CharmieCommand {
       .setFields(this._formatFields(user))
       .setFooter({ text: `User ID: ${user.id}` });
 
-    if (permissionsCheck(message.member!, message.guild, context.database_guild))
+    if (permissionsCheck(message.member!, message.guild, context.config))
       await this._getReceivedInfractions(embed, user.id, message.guildId, showUndos);
 
     return reply(message, { embeds: [embed] });

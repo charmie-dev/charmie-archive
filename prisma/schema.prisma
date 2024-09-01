@@ -30,14 +30,24 @@ model Guilds {
   msgCmdsDisabledList        String[]
   msgCmdsPreserveErrors      Boolean  @default(false)
   msgCmdsErrorDeleteDelay    Int      @default(7500)
-  msgCmdsRoleOverrides       Json[]
-  msgCmdsChannelOverrides    Json[]
   msgCmdsShowExecutor        Boolean  @default(false)
+
+  msgCmdsRoleOverrides    Json[]
+  msgCmdsChannelOverrides Json[]
 
   // Infraction configurations
 
   requireInfractionReason Boolean @default(true)
   defaultWarningDuration  BigInt  @default(0)
+
+  // Logging configurations
+
+  infractionLogsEnabled   Boolean @default(true)
+  infractionLogsChannelId String?
+
+  // Other configurations
+
+  moderatorRoles String[]
 
   // Relation: Represents the guild's infractions
   infractions Infractions[]

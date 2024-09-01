@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Precondition } from '@sapphire/framework';
 import { GuildTextBasedChannel, PermissionFlagsBits, PermissionsBitField, type Message } from 'discord.js';
+import { Prisma } from '@prisma/client';
 
 import { CommandChannelOverride, CommandRoleOverride } from '../managers/config/schema';
 import { CharmieMessageCommand, CommandCategory } from '../managers/commands/Command';
@@ -20,9 +21,10 @@ export default class PermissionsPrecondition extends Precondition {
       command,
       requiredPermissions
     );
-    if (userPermissionsResult.isErr()) return userPermissionsResult;
 
-    return this.checkChannelPermissions(message as Message<true>, command);
+    return userPermissionsResult.isErr()
+      ? userPermissionsResult
+      : this.checkChannelPermissions(message as Message<true>, command);
   }
 
   private shouldSkipChecks(message: Message, command: CharmieMessageCommand): boolean {
@@ -98,8 +100,16 @@ export default class PermissionsPrecondition extends Precondition {
   ): Promise<Precondition.Result> {
     if (this.hasAdminPrivileges(message)) return this.ok();
 
-    const channelOverride = await this.getChannelOverride(message);
-    if (!this.isAllowed(channelOverride, command)) return this.commandDisabledError();
+    const { msgCmdsChannelOverrides, moderatorRoles } = await GuildCache.get(message.guildId);
+
+    if (this.isModerator(moderatorRoles, message)) {
+      return this.ok();
+    }
+
+    const channelOverride = await this.getChannelOverride(message, msgCmdsChannelOverrides);
+    if (!this.isAllowed(channelOverride, command)) {
+      return this.commandDisabledError();
+    }
 
     if (channelOverride!.roles.length > 0 && !this.hasAllowedRole(message, channelOverride!)) {
       return this.commandDisabledError();
@@ -108,9 +118,11 @@ export default class PermissionsPrecondition extends Precondition {
     return this.ok();
   }
 
-  private async getChannelOverride(message: Message<true>): Promise<CommandChannelOverride | null> {
-    const { msgCmdsChannelOverrides } = await GuildCache.get(message.guildId);
-    return this.findRelevantChannelOverride(message, msgCmdsChannelOverrides as CommandChannelOverride[]);
+  private async getChannelOverride(
+    message: Message<true>,
+    overrides: Prisma.JsonArray
+  ): Promise<CommandChannelOverride | null> {
+    return this.findRelevantChannelOverride(message, overrides as CommandChannelOverride[]);
   }
 
   private findRelevantChannelOverride(
@@ -135,6 +147,11 @@ export default class PermissionsPrecondition extends Precondition {
 
   private isAllowed(channelOverride: CommandChannelOverride | null, command: CharmieMessageCommand): boolean {
     return channelOverride?.commands.includes(command.name) ?? false;
+  }
+
+  private isModerator(roles: string[], message: Message<true>): boolean {
+    if (!roles.length) return false;
+    return roles.some(role => message.member!.roles.cache.has(role));
   }
 
   private hasAllowedRole(message: Message<true>, channelOverride: CommandChannelOverride): boolean {
