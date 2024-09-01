@@ -73,16 +73,16 @@ export default class Mute extends CharmieCommand {
       reason
     });
 
-    InfractionManager.resolvePunishment({
+    await InfractionManager.resolvePunishment({
       guild: message.guild,
       target,
       executor,
       punishment: 'Mute',
-      duration: duration as number,
+      duration: duration ? (duration as number) : Number(config.defaultMuteDuration),
       reason
     }).catch(async () => {
       await InfractionManager.deleteInfraction({ id: infraction.id });
-      throw 'Failed to mute the member.';
+      throw 'An error occurred while attempting to mute the target. As a result, the related infraction has been deleted.';
     });
 
     InfractionManager.sendNotificationDM({ guild: message.guild, target, infraction });
