@@ -36,41 +36,43 @@ export default class InfractionManager {
 
   public static async resolvePunishment(data: {
     guild: Guild;
-    moderator: User;
+    executor: GuildMember;
     target: GuildMember | User;
     punishment: Exclude<InfractionType, 'Warn'>;
     duration: number | null;
     reason: string;
   }) {
-    const { guild, moderator, target, punishment, duration, reason } = data;
+    const { guild, executor, target, punishment, duration, reason } = data;
 
     switch (punishment) {
       case 'Mute':
-        return await (target as GuildMember)
-          .timeout(duration!, InfractionManager.formatAuditLogReason(moderator, punishment, reason))
-          .catch(() => {});
+        return await (target as GuildMember).timeout(
+          duration!,
+          InfractionManager.formatAuditLogReason(executor, punishment, reason)
+        );
 
       case 'Kick':
-        return await guild.members
-          .kick(target.id, InfractionManager.formatAuditLogReason(moderator, punishment, reason))
-          .catch(() => {});
+        return await guild.members.kick(
+          target.id,
+          InfractionManager.formatAuditLogReason(executor, punishment, reason)
+        );
 
       case 'Ban':
-        return await guild.members
-          .ban(target.id, {
-            reason: InfractionManager.formatAuditLogReason(moderator, punishment, reason)
-          })
-          .catch(() => {});
+        return await guild.members.ban(target.id, {
+          reason: InfractionManager.formatAuditLogReason(executor, punishment, reason)
+        });
 
       case 'Unban':
-        return await guild.members
-          .unban(target.id, InfractionManager.formatAuditLogReason(moderator, punishment, reason))
-          .catch(() => {});
+        return await guild.members.unban(
+          target.id,
+          InfractionManager.formatAuditLogReason(executor, punishment, reason)
+        );
 
       case 'Unmute':
-        return await (target as GuildMember)
-          .timeout(null, InfractionManager.formatAuditLogReason(moderator, punishment, reason))
-          .catch(() => {});
+        return await (target as GuildMember).timeout(
+          null,
+          InfractionManager.formatAuditLogReason(executor, punishment, reason)
+        );
     }
   }
 
@@ -108,13 +110,13 @@ export default class InfractionManager {
   }
 
   private static formatAuditLogReason(
-    moderator: User,
+    executor: GuildMember,
     punishment: Exclude<InfractionType, 'Warn'>,
     reason: string
   ): string {
-    return `[${capitalize(punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS)} by ${moderator.username} (${
-      moderator.id
-    })] ${reason}`;
+    return `[${capitalize(punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS)} by ${
+      executor.user.username
+    } (${executor.id})] ${reason}`;
   }
 
   public static async sendNotificationDM(data: {
@@ -128,13 +130,13 @@ export default class InfractionManager {
       .setAuthor({ name: guild.name, iconURL: guild.iconURL()! })
       .setColor(INFRACTION_COLORS[infraction.type])
       .setTitle(
-        `You have been ${InfractionManager.formatPastTenseInfraction(
+        `You've been ${InfractionManager.formatPastTenseInfraction(infraction.type)} ${InfractionManager.getPreposition(
           infraction.type
-        )} ${InfractionManager.getPreposition(infraction.type)} ${guild.name}`
+        )} ${guild.name}`
       )
       .setFields([
-        { name: 'Reason', value: infraction.reason, inline: true },
-        { name: 'Expiration', value: InfractionManager.formatExpiration(infraction.expiresAt), inline: true }
+        { name: 'Reason', value: infraction.reason },
+        { name: 'Expiration', value: InfractionManager.formatExpiration(infraction.expiresAt) }
       ])
       .setFooter({ text: `Infraction ID: ${infraction.id}` });
 
@@ -190,10 +192,10 @@ export default class InfractionManager {
 export const PAST_TENSE_INFRACTIONS = {
   ban: 'banned',
   kick: 'kicked',
-  timeout: 'muted',
+  mute: 'muted',
   warn: 'warned',
   unban: 'unbanned',
-  untimeout: 'unmuted'
+  unmute: 'unmuted'
 };
 
 export const INFRACTION_COLORS = {

@@ -39,6 +39,7 @@ model Guilds {
 
   requireInfractionReason Boolean @default(true)
   defaultWarningDuration  BigInt  @default(0)
+  defaultMuteDuration     BigInt  @default(0)
 
   // Logging configurations
 
@@ -69,7 +70,7 @@ model Infractions {
   // The type of infraction
   type        InfractionType
   // The reason for the infraction
-  reason      String         @default("Unspecified.") // We default to "Unspecified." in case the reason is not provided
+  reason      String         @default("No reason provided.") // We default to "No reason provided." in case the reason is not provided
   // The date the infraction was issued
   createdAt   BigInt
   // The date the infraction expires (if applicable)
