@@ -34,7 +34,7 @@ export default class Help extends CharmieCommand {
       if (this.isRestrictedCommand(commandName, message.author.id)) throw 'That command does not exist.';
 
       const command = this.container.stores.get('commands').get(commandName) as CharmieCommand;
-      if (!command) 'That command does not exist.';
+      if (!command) throw 'That command does not exist.';
 
       return this.displayCommandHelp(message, command, prefix);
     }
