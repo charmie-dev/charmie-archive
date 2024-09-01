@@ -114,7 +114,7 @@ export default class InfractionManager {
     punishment: Exclude<InfractionType, 'Warn'>,
     reason: string
   ): string {
-    return `[${capitalize(punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS)} by ${
+    return `[${capitalize(PAST_TENSE_INFRACTIONS[punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS])} by ${
       executor.user.username
     } (${executor.id})] ${reason}`;
   }
