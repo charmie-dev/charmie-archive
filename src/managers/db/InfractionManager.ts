@@ -156,7 +156,7 @@ export default class InfractionManager {
       .setTimestamp(Number(infraction.createdAt));
 
     if (infraction.expiresAt)
-      logEmbed.spliceFields(3, 0, {
+      logEmbed.spliceFields(2, 0, {
         name: 'Expiration',
         value: InfractionManager.formatExpiration(infraction.expiresAt)
       });
