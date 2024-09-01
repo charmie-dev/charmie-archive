@@ -76,7 +76,7 @@ export async function createHastebinPaste(data: any, ext: string = 'js'): Promis
  */
 
 export function userMentionWithId(id: Snowflake): `<@${Snowflake}> (\`${Snowflake}\`)` {
-  return `<@${id}> (\`${id}\`)`;
+  return `<@!${id}> (\`${id}\`)`;
 }
 
 /**

@@ -1,9 +1,12 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { send } from '@sapphire/plugin-editable-commands';
-import { EmbedBuilder } from 'discord.js';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import InfractionManager, { INFRACTION_COLORS } from '../managers/db/InfractionManager';
+import InfractionManager, {
+  INFRACTION_COLORS,
+  REASON_MAX_LENGTH,
+  REASON_PLACEHOLDER
+} from '../managers/db/InfractionManager';
 
 @ApplyOptions<CharmieCommand.Options>({
   aliases: ['w', 'strike'],
@@ -18,7 +21,7 @@ export default class Warn extends CharmieCommand {
     args: CharmieCommand.Args,
     context: CharmieCommand.GuildRunContext
   ) {
-    const { database_guild: config } = context;
+    const { config } = context;
 
     if (args.finished) throw 'You must provide a member to warn.';
 
@@ -49,10 +52,11 @@ export default class Warn extends CharmieCommand {
     if (expiration === null && duration !== 'permanent' && config.defaultWarningDuration !== 0n)
       expiration = Number(config.defaultWarningDuration) + currentDate;
 
-    const reason = await args.rest('string').catch(() => 'Unspecified.');
-    if (reason === 'Unspecified.' && config.requireInfractionReason)
+    const reason = await args.rest('string').catch(() => REASON_PLACEHOLDER);
+    if (reason === REASON_PLACEHOLDER && config.requireInfractionReason)
       throw `You must provide a reason for this warning.`;
-    if (reason.length > 1000) throw `The reason cannot exceed 1000 characters (${reason.length} provided).`;
+    if (reason.length > REASON_MAX_LENGTH)
+      throw `The reason cannot exceed 1000 characters (${reason.length}/${REASON_MAX_LENGTH}).`;
 
     if (config.msgCmdsAutoDelete) await message.delete().catch(() => {});
 
@@ -66,25 +70,18 @@ export default class Warn extends CharmieCommand {
       reason
     });
 
-    const notificationEmbed = new EmbedBuilder()
-      .setAuthor({ name: message.guild.name, iconURL: message.guild.iconURL()! })
-      .setColor(INFRACTION_COLORS.Warn)
-      .setTitle(`You've been warned in ${message.guild.name}`)
-      .setFields([
-        { name: 'Reason', value: reason, inline: true },
-        { name: 'Expiration', value: InfractionManager.formatExpiration(expiration), inline: true }
-      ])
-      .setFooter({ text: `Infraction ID: ${infraction.id}` });
+    InfractionManager.sendNotificationDM({ guild: message.guild, target, infraction });
 
-    await target.send({ embeds: [notificationEmbed] }).catch(() => {});
-
-    return send(message, {
-      embeds: [
-        {
-          description: `${target.toString()} has been **warned** with ID \`#${infraction.id}\``,
-          color: INFRACTION_COLORS.Warn
-        }
-      ]
-    });
+    return Promise.all([
+      send(message, {
+        embeds: [
+          {
+            description: `${target.toString()} has been **warned** with ID \`#${infraction.id}\``,
+            color: INFRACTION_COLORS.Warn
+          }
+        ]
+      }),
+      InfractionManager.sendInfractionLog({ message, config, infraction })
+    ]);
   }
 }

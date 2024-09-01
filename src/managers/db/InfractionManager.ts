@@ -1,8 +1,8 @@
-import { Infractions as DatabaseInfraction, InfractionType, Prisma } from '@prisma/client';
+import { Infractions as DatabaseInfraction, Guilds as DatabaseGuild, InfractionType, Prisma } from '@prisma/client';
 import { container } from '@sapphire/framework';
-import { Colors, Guild, GuildMember, time, User } from 'discord.js';
+import { Colors, EmbedBuilder, Guild, GuildMember, Message, time, User } from 'discord.js';
 
-import { capitalize, hierarchyCheck } from '../../utils';
+import { capitalize, hierarchyCheck, userMentionWithId } from '../../utils';
 
 export default class InfractionManager {
   public static async storeInfraction(data: Prisma.InfractionsCreateArgs['data']): Promise<DatabaseInfraction> {
@@ -109,10 +109,73 @@ export default class InfractionManager {
     })] ${reason}`;
   }
 
-  public static formatExpiration(expiration: number | null): string {
+  public static async sendNotificationDM(data: {
+    guild: Guild;
+    target: GuildMember;
+    infraction: DatabaseInfraction;
+  }): Promise<Message | unknown> {
+    const { guild, target, infraction } = data;
+
+    const notificationEmbed = new EmbedBuilder()
+      .setAuthor({ name: guild.name, iconURL: guild.iconURL()! })
+      .setColor(INFRACTION_COLORS[infraction.type])
+      .setTitle(
+        `You have been ${InfractionManager.formatPastTenseInfraction(
+          infraction.type
+        )} ${InfractionManager.getPreposition(infraction.type)} ${guild.name}`
+      )
+      .setFields([
+        { name: 'Reason', value: infraction.reason, inline: true },
+        { name: 'Expiration', value: InfractionManager.formatExpiration(infraction.expiresAt), inline: true }
+      ])
+      .setFooter({ text: `Infraction ID: ${infraction.id}` });
+
+    return target.send({ embeds: [notificationEmbed] }).catch(() => {});
+  }
+
+  public static async sendInfractionLog(data: {
+    message: Message<true>;
+    config: DatabaseGuild;
+    infraction: DatabaseInfraction;
+  }): Promise<Message | unknown> {
+    const { message, config, infraction } = data;
+
+    if (!config.infractionLogsChannelId || !config.infractionLogsEnabled) return;
+
+    const channel = await message.guild.channels.fetch(config.infractionLogsChannelId);
+    if (!channel || !channel.isTextBased()) return;
+
+    const logEmbed = new EmbedBuilder()
+      .setAuthor({ name: `${infraction.type} - #${infraction.id}`, iconURL: message.author.displayAvatarURL() })
+      .setColor(INFRACTION_COLORS[infraction.type])
+      .setFields([
+        { name: 'Moderator', value: userMentionWithId(infraction.moderatorId) },
+        { name: 'Target', value: userMentionWithId(infraction.userId) },
+        { name: 'Reason', value: infraction.reason }
+      ])
+      .setTimestamp(Number(infraction.createdAt));
+
+    if (infraction.expiresAt)
+      logEmbed.spliceFields(3, 0, {
+        name: 'Expiration',
+        value: InfractionManager.formatExpiration(infraction.expiresAt)
+      });
+
+    return channel.send({ embeds: [logEmbed] }).catch(() => {});
+  }
+
+  public static formatExpiration(expiration: bigint | number | null): string {
     return expiration === null
       ? 'Never'
-      : `${time(Math.floor(expiration / 1000))} (${time(Math.floor(expiration / 1000), 'R')})`;
+      : `${time(Math.floor(Number(expiration) / 1000))} (${time(Math.floor(Number(expiration) / 1000), 'R')})`;
+  }
+
+  private static getPreposition(type: InfractionType): string {
+    return ['Ban', 'Kick', 'Unban'].includes(type) ? 'from' : 'in';
+  }
+
+  private static formatPastTenseInfraction(type: InfractionType): string {
+    return PAST_TENSE_INFRACTIONS[type.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS];
   }
 }
 
@@ -133,3 +196,6 @@ export const INFRACTION_COLORS = {
   Unmute: Colors.Green,
   Unban: Colors.Green
 };
+
+export const REASON_PLACEHOLDER = 'No reason provided.';
+export const REASON_MAX_LENGTH = 1000;
