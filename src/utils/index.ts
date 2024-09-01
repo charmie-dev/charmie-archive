@@ -306,5 +306,5 @@ export function parseDuration(durationStr: string | null): number {
 export function hierarchyCheck(executor: GuildMember, target: GuildMember): boolean {
   if (executor.guild.ownerId === executor.id) return true;
   if (target.guild.ownerId === target.id) return false;
-  return executor.roles.highest.comparePositionTo(executor.roles.highest) > 0;
+  return executor.roles.highest.comparePositionTo(target.roles.highest) > 0;
 }
