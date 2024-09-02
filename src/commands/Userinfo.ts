@@ -3,7 +3,6 @@ import {
   EmbedBuilder,
   EmbedField,
   GuildMember,
-  PermissionFlagsBits,
   Snowflake,
   time,
   TimestampStyles,
@@ -21,7 +20,6 @@ import { permissionsCheck } from '../utils';
   usage: '[user] [--show-undos]',
   description: 'Get information about a user.',
   aliases: ['ui', 'whois'],
-  requiredUserPermissions: PermissionFlagsBits.ModerateMembers,
   mappedFlags: [{ name: 'show-undos', aliases: ['show', 'u'] }],
   flags: ['show-undos', 'show', 'u']
 })
