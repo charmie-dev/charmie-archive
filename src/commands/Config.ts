@@ -263,7 +263,7 @@ export default class Config extends CharmieCommand {
                 }
               ]);
 
-              return message.reply({ embeds: [embed] });
+              return reply(message, { embeds: [embed] });
             }
 
             const commandName = await args.pick('string').catch(() => {
@@ -284,7 +284,7 @@ export default class Config extends CharmieCommand {
                 data: { enabled: false }
               });
 
-              return reply(message, `The \`${commandName}\` shortcut has been disabled.`);
+              return reply(message, { content: `The \`${commandName}\` shortcut has been disabled.`, embeds: [] });
             }
 
             if (command.category === CommandCategory.Developer) throw 'That command or shortcut does not exist.';
