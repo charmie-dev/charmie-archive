@@ -48,14 +48,14 @@ Ensure that your `.env` and `charmie.cfg.yml` files are present and properly con
 
 # Important
 
-This repository contains the bare minimum code for running charmie and it's new infrastructure. It is by no means in a production state and will remain like this until completely finished. It is absolutely forbidden to share the code inside of this repository with anyone else unless for as long as it remains private.
+This repository contains the bare minimum code for running charmie and it's new version. It is by no means in a production state and will remain like this until completely finished. That said, It is absolutely forbidden to share the code with anyone else for as long as it remains private.
 
-Failure to comply with rule will result in your view permissions being revoked.
+Failure to comply with this regulation will result in your view permissions being revoked.
 
 # Credits
 
-This bot was created & maintained by [redicides](https://github.com/redicides). However, it is inspired by multiple other bots and contains code from some of them. The credits for these bots are listed below.
+This bot was created & is maintained by [redicides](https://github.com/redicides), however, it is inspired by multiple other bots and contains code from some of them. The credits for these bots are listed below.
 
 ## [[RoDis Infrastructure] Azalea](https://github.com/Rodis-Infrastructure/Azalea)
 
-- The configuration system, message caching system, cron management system, a number of schematics for zod, design elements, as well as a number of utility functions & classes from Azalea are used in Charmie.
+- The configuration system, message caching system, cron management system, as well as a number of utility functions from Azalea are used in Charmie.
