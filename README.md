@@ -17,8 +17,10 @@ Additionally a file with the name `charmie.cfg.yml` must be present in the root 
 database:
   messages:
     insert_cron: '{cron}' # Cron expression (see https://crontab.guru/).
-    delete_cron: '{cron}' # Cron expression (see https://crontab.guru/)
+    delete_cron: '{cron}' # Cron expression (see https://crontab.guru/).
     ttl: { number } # How old (in milliseconds) messages should be before being deleted from the database.
+  
+  config_cache_delete_cron: '{cron}' # Cron expression for wiping the config cache. It's recommended to use an hourly interval for this.
 
 commands:
   prefix: '{default prefix}' # The default prefix for commands or commands in DMs.
