@@ -25,6 +25,7 @@ export default class Statistics extends CharmieCommand {
 
     const start = performance.now();
     await this.container.db.guilds.findUnique({ where: { id: message.guildId } });
+    const dbInfractions = await this.container.db.infractions.count();
     const dbQueryPing = performance.now() - start;
 
     // Get the database size in MB.
@@ -40,13 +41,13 @@ export default class Statistics extends CharmieCommand {
       .setThumbnail(client.user!.displayAvatarURL())
       .setFields([
         {
-          name: 'Cache Information',
+          name: 'Cache',
           value: `Guilds: \`${client.guilds.cache.size}\`\nUsers: \`${client.users.cache.size}\`\nChannels: \`${
             client.channels.cache.size
           }\`\nMessages: \`${MessageCache.getQueueSize()}\``
         },
         {
-          name: 'Process Information',
+          name: 'Process',
           value: `RSS Memory: \`${Math.floor(
             process.memoryUsage.rss() / 1024 / 1024
           )} MB\`\nHeap Memory: \`${Math.floor(process.memoryUsage().heapUsed / 1024 / 1024)} MB\`\nUptime: \`${ms(
@@ -55,10 +56,10 @@ export default class Statistics extends CharmieCommand {
           )}\``
         },
         {
-          name: 'Other Information',
+          name: 'Other',
           value: `Database Heartbeat: \`${Math.floor(
             dbQueryPing
-          )}ms\`\nDatabase Size: \`${dbSizeInMB} MB\`\nClient Heartbeat: \`${client.ws.ping}ms\``
+          )}ms\`\nDatabase Size: \`${dbSizeInMB} MB\`\nDatabase Infractions: \`${dbInfractions}\`\nClient Heartbeat: \`${client.ws.ping}ms\``
         }
       ]);
 
