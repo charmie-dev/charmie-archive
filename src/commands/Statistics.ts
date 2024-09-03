@@ -61,7 +61,7 @@ export default class Statistics extends CharmieCommand {
         },
         {
           name: 'Database',
-          value: `Size: \`${dbSizeInMb} MB\`\nHeartbeat: \`${Math.floor(
+          value: `Size: \`${dbSizeInMB} MB\`\nHeartbeat: \`${Math.floor(
             dbQueryPing
           )}ms\`\nInfractions: \`${dbInfractions}\`\nGuilds: \`${dbGuilds}\``
         }
