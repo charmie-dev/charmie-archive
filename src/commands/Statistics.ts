@@ -27,9 +27,10 @@ export default class Statistics extends CharmieCommand {
     await this.container.db.guilds.findUnique({ where: { id: message.guildId } });
     const dbQueryPing = performance.now() - start;
 
-    // Count all infractions in the database
+    // Count all infractions and guilds in the database
 
     const dbInfractions = await this.container.db.infractions.count();
+    const dbGuilds = await this.container.db.guilds.count();
 
     // Get the database size in MB.
     const dbSize = await this.container.db.$queryRaw<[{ size_in_mb: number }]>`
@@ -59,10 +60,10 @@ export default class Statistics extends CharmieCommand {
           )}\``
         },
         {
-          name: 'Other',
-          value: `Database Heartbeat: \`${Math.floor(
+          name: 'Database',
+          value: `Size: \`${dbSizeInMb} MB\`\nHeartbeat: \`${Math.floor(
             dbQueryPing
-          )}ms\`\nDatabase Size: \`${dbSizeInMB} MB\`\nDatabase Infractions: \`${dbInfractions}\`\nClient Heartbeat: \`${client.ws.ping}ms\``
+          )}ms\`\nInfractions: \`${dbInfractions}\`\nGuilds: \`${dbGuilds}\``
         }
       ]);
 
