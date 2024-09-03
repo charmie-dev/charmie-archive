@@ -1,9 +1,10 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { reply } from '@sapphire/plugin-editable-commands';
+import { EmbedBuilder } from '@discordjs/builders';
+
+import ms from 'ms';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import ms from 'ms';
-import { EmbedBuilder } from '@discordjs/builders';
 import { DEFAULT_EMBED_COLOR } from '../utils/constants';
 
 @ApplyOptions<CharmieCommand.Options>({

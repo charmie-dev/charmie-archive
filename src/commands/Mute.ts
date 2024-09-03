@@ -1,12 +1,15 @@
 import { ApplyOptions } from '@sapphire/decorators';
+import { send } from '@sapphire/plugin-editable-commands';
+
+import ms from 'ms';
+
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+
 import InfractionManager, {
   INFRACTION_COLORS,
   REASON_MAX_LENGTH,
   REASON_PLACEHOLDER
 } from '../managers/db/InfractionManager';
-import ms from 'ms';
-import { send } from '@sapphire/plugin-editable-commands';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Moderation,
