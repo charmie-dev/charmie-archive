@@ -6,9 +6,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "bun dist/index.js",
     "start:pm2": "pm2 start process.json",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:push": "bunx prisma db push",
+    "db:generate": "bunx prisma generate",
+    "project:format": "bunx prettier --write src/**/*.ts",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org codys-dev-stuff --project charmie ./dist && sentry-cli sourcemaps upload --org codys-dev-stuff --project charmie ./dist"
   },
   "repository": {
@@ -17,9 +19,9 @@
   },
   "keywords": [
     "Discord",
-    "DiscordBot",
-    "DiscordModerationBot",
-    "DiscordUtilityBot"
+    "Discord-Bot",
+    "Discord-ModerationBot",
+    "Discord-UtilityBot"
   ],
   "author": {
     "name": "redicides",
@@ -49,6 +51,7 @@
   "devDependencies": {
     "@prisma/client": "^5.18.0",
     "@types/ms": "^0.7.34",
+    "@types/bun": "^1.1.8",
     "dotenv": "^16.4.5",
     "typescript": "^5.5.4"
   }

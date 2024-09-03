@@ -48,18 +48,18 @@ export default class CommandManager {
       name: Events.MessageCommandError,
       piece: MessageCommandError
     });
-    Logger.info(`Loaded piece "${capitalize(Events.MessageCommandError)}"`);
+    Logger.info(`Loaded virtual piece "${capitalize(Events.MessageCommandError)}"`);
     await container.stores.loadPiece({
       store: 'listeners',
       name: Events.MessageCommandDenied,
       piece: MessageCommandDenied
     });
-    Logger.info(`Loaded piece "${capitalize(Events.MessageCommandDenied)}"`);
+    Logger.info(`Loaded virtual piece "${capitalize(Events.MessageCommandDenied)}"`);
     await container.stores.loadPiece({
       store: 'listeners',
       name: 'CorePreMessageParser',
       piece: MessageCommandParsed
     });
-    Logger.info(`Loaded piece "${capitalize(Events.PreMessageParsed)}"`);
+    Logger.info(`Loaded virtual piece "${capitalize(Events.PreMessageParsed)}"`);
   }
 }
