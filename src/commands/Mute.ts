@@ -64,7 +64,7 @@ export default class Mute extends CharmieCommand {
     if (reason.length > REASON_MAX_LENGTH)
       throw `The reason cannot exceed ${REASON_MAX_LENGTH} characters (provided ${reason.length}).`;
 
-    if (config.msgCmdsAutoDelete) await message.delete().catch(() => {});
+    if (config.msgCmdsAutoDelete) message.delete().catch(() => {});
 
     const infraction = await InfractionManager.storeInfraction({
       guildId: message.guildId,
