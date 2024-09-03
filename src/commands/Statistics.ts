@@ -25,8 +25,11 @@ export default class Statistics extends CharmieCommand {
 
     const start = performance.now();
     await this.container.db.guilds.findUnique({ where: { id: message.guildId } });
-    const dbInfractions = await this.container.db.infractions.count();
     const dbQueryPing = performance.now() - start;
+
+    // Count all infractions in the database
+
+    const dbInfractions = await this.container.db.infractions.count();
 
     // Get the database size in MB.
     const dbSize = await this.container.db.$queryRaw<[{ size_in_mb: number }]>`
