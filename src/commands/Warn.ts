@@ -56,7 +56,7 @@ export default class Warn extends CharmieCommand {
     if (reason === REASON_PLACEHOLDER && config.requireInfractionReason)
       throw `You must provide a reason for this warning.`;
     if (reason.length > REASON_MAX_LENGTH)
-      throw `The reason cannot exceed 1000 characters (\`${reason.length}\`/\`${REASON_MAX_LENGTH}\`).`;
+      throw `The reason cannot exceed ${REASON_MAX_LENGTH} characters (provided ${reason.length}).`;
 
     if (config.msgCmdsAutoDelete) await message.delete().catch(() => {});
 
