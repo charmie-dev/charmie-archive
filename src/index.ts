@@ -14,6 +14,7 @@ import { ExtendedPrismaClient, ExtendedPrismaClientType } from './managers/db/Ex
 import Logger, { AnsiColor } from './utils/logger';
 import CronUtils from './utils/cron';
 import ConfigManager from './managers/config/ConfigManager';
+import CommandManager from './managers/commands/CommandManager';
 
 /**
  * The client class, an extension of the {@link https://sapphirejs.dev/docs/Documentation/api-framework/classes/SapphireClient SapphireClient }.
@@ -65,6 +66,10 @@ async function main() {
   // Cache the global configuration
 
   ConfigManager.cacheGlobalConfig();
+
+  // Load virtual pieces
+
+  await CommandManager.loadVirtualPieces();
 
   // Initialize sentry
 

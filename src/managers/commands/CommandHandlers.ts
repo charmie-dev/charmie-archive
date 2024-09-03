@@ -1,25 +1,116 @@
-import { Events, Listener, Result } from '@sapphire/framework';
-import { type Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import {
+  Events,
+  Identifiers,
+  Listener,
+  MessageCommandDeniedPayload,
+  MessageCommandErrorPayload,
+  Result,
+  UserError
+} from '@sapphire/framework';
 import { Stopwatch } from '@sapphire/stopwatch';
 import { isDMChannel } from '@sapphire/discord.js-utilities';
+import { Colors, Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
-import {
-  CharmieCommandGuildRunContext,
-  CharmieCommandRunContext,
-  CharmieMessageCommand
-} from '../managers/commands/Command';
+import { PRECONDITION_IDENTIFIERS } from '../../utils/constants';
+import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from './Command';
+import { sendOrReply } from '../../utils';
+import { Sentry } from '../../index';
 
-import GuildCache from '../managers/db/GuildCache';
-import CommandManager from '../managers/commands/CommandManager';
+import Logger from '../../utils/logger';
+import GuildCache from '../db/GuildCache';
+import CommandManager from './CommandManager';
 
-/**
- * The overriden message command listener from sapphire that runs after the message has been parsed. (This means no bots or webhooks.)
- * We do not need to override it in this stage, however, for easy access, and to avoid emitting extra events, we keep everything in one file.
- *
- * For the original version of this listener, see {@link https://github.com/sapphiredev/framework/blob/main/src/optional-listeners/message-command-listeners/CorePreMessageParser.ts Sapphire's CorePreMessageParser.ts}.
- */
+export class MessageCommandError extends Listener<typeof Events.MessageCommandError> {
+  public constructor(context: Listener.LoaderContext) {
+    super(context, { event: Events.MessageCommandError });
+  }
 
-export default class CoreListener extends Listener<typeof Events.PreMessageParsed> {
+  public async run(uError: UserError, { message }: MessageCommandErrorPayload) {
+    if (typeof uError !== 'string') {
+      const sentryId = Sentry.captureException(uError);
+      Logger.error(`Message command error: ${uError}`, uError);
+      return MessageCommandError.throw(
+        message,
+        `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`,
+        true
+      );
+    }
+
+    if (message.inGuild()) {
+      const { msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay } = await GuildCache.get(message.guildId);
+      return MessageCommandError.throw(message, uError, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
+    }
+
+    return MessageCommandError.throw(message, uError);
+  }
+
+  /**
+   * Replies to the message with an error embed.
+   *
+   * @param message The message to reply to (will fallback to sending if the message can't be replied to)
+   * @param error The error message to reply with
+   * @param preserve Whether to preserve the message or not
+   * @param delay The delay before deleting the message in milliseconds
+   *
+   * @returns void
+   */
+
+  public static async throw(
+    message: Message,
+    error: string,
+    preserve: boolean = false,
+    delay: number = 7500
+  ): Promise<void> {
+    const errorMsg = await sendOrReply(message, {
+      embeds: [{ description: error, color: Colors.Red }]
+    });
+
+    if (!preserve) {
+      setTimeout(() => {
+        errorMsg.delete().catch(() => {});
+        message.delete().catch(() => {});
+      }, delay);
+    }
+  }
+}
+
+export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
+  public constructor(context: Listener.LoaderContext) {
+    super(context, { event: Events.MessageCommandDenied });
+  }
+
+  public async run({ message: eMsg, identifier }: UserError, { message }: MessageCommandDeniedPayload) {
+    if (identifier === PRECONDITION_IDENTIFIERS.Silent || identifier === Identifiers.PreconditionGuildOnly) return;
+
+    let respond = true;
+    let preserve = false;
+
+    if (message.inGuild()) {
+      const {
+        msgCmdsPreserveErrors,
+        msgCmdsErrorDeleteDelay,
+        msgCmdsRespondIfDisabled,
+        msgCmdsRespondIfNoPerms,
+        msgCmdsRespondIfNotAllowed
+      } = await GuildCache.get(message.guildId);
+
+      respond =
+        identifier === PRECONDITION_IDENTIFIERS.CommandDisabled
+          ? msgCmdsRespondIfDisabled
+          : identifier === PRECONDITION_IDENTIFIERS.CommandDisabledInChannel
+          ? msgCmdsRespondIfNotAllowed
+          : msgCmdsRespondIfNoPerms;
+
+      if (!respond) return message.delete().catch(() => {});
+      return MessageCommandError.throw(message, eMsg, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
+    }
+
+    preserve = identifier === Identifiers.PreconditionClientPermissions;
+    return MessageCommandError.throw(message, eMsg, preserve);
+  }
+}
+
+export class MessageCommandParsed extends Listener<typeof Events.PreMessageParsed> {
   private readonly requiredPermissions = new PermissionsBitField([
     PermissionFlagsBits.ViewChannel,
     PermissionFlagsBits.SendMessages
@@ -73,7 +164,7 @@ export default class CoreListener extends Listener<typeof Events.PreMessageParse
         .get(client.options.caseInsensitiveCommands ? commandName.toLowerCase() : commandName);
 
       if (!command) {
-        return CommandManager.checkForCommands(message);
+        return CommandManager.checkRawMessage(message);
       }
 
       if (!command.messageRun) {

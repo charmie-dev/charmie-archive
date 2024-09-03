@@ -112,13 +112,5 @@ export class CharmieClient extends SapphireClient {
      */
 
     this.stores.get('listeners').registerPath(join(this.rootData.root, 'events'));
-
-    /**
-     * We register a third store for listeners that handle command related events.
-     *
-     * E.g {@link Events.PreMessageParsed}, which runs after the message has been parsed
-     */
-
-    this.stores.get('listeners').registerPath(join(this.rootData.root, 'handlers'));
   }
 }

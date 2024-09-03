@@ -1,15 +1,19 @@
 import { Message } from 'discord.js';
-import { container } from '@sapphire/framework';
+import { container, Events } from '@sapphire/framework';
+
+import { MessageCommandError, MessageCommandDenied, MessageCommandParsed } from './CommandHandlers';
+import { capitalize } from '../../utils';
 
 import GuildCache from '../db/GuildCache';
+import Logger from '../../utils/logger';
 
 export default class CommandManager {
-  public static checkForCommands(message: Message) {
+  public static checkRawMessage(message: Message) {
     if (!message.inGuild() || message.author.bot || message.webhookId || !message.content) return;
-    return CommandManager.parseMessage(message);
+    return CommandManager.parseRawMessage(message);
   }
 
-  public static async parseMessage(message: Message<true>) {
+  public static async parseRawMessage(message: Message<true>) {
     const { msgCmdsPrefix } = await GuildCache.get(message.guildId);
 
     let usedPrefix = msgCmdsPrefix;
@@ -36,5 +40,26 @@ export default class CommandManager {
     });
 
     if (!command) return;
+  }
+
+  public static async loadVirtualPieces() {
+    await container.stores.loadPiece({
+      store: 'listeners',
+      name: Events.MessageCommandError,
+      piece: MessageCommandError
+    });
+    Logger.info(`Loaded piece "${capitalize(Events.MessageCommandError)}"`);
+    await container.stores.loadPiece({
+      store: 'listeners',
+      name: Events.MessageCommandDenied,
+      piece: MessageCommandDenied
+    });
+    Logger.info(`Loaded piece "${capitalize(Events.MessageCommandDenied)}"`);
+    await container.stores.loadPiece({
+      store: 'listeners',
+      name: 'CorePreMessageParser',
+      piece: MessageCommandParsed
+    });
+    Logger.info(`Loaded piece "${capitalize(Events.PreMessageParsed)}"`);
   }
 }
