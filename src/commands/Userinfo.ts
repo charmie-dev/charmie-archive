@@ -1,13 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  EmbedBuilder,
-  EmbedField,
-  GuildMember,
-  Snowflake,
-  time,
-  TimestampStyles,
-  User
-} from 'discord.js';
+import { EmbedBuilder, EmbedField, GuildMember, Snowflake, time, TimestampStyles, User } from 'discord.js';
 import { InfractionType } from '@prisma/client';
 import { reply } from '@sapphire/plugin-editable-commands';
 

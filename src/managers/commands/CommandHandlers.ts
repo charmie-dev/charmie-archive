@@ -98,8 +98,8 @@ export class MessageCommandDenied extends Listener<typeof Events.MessageCommandD
         identifier === PRECONDITION_IDENTIFIERS.CommandDisabled
           ? msgCmdsRespondIfDisabled
           : identifier === PRECONDITION_IDENTIFIERS.CommandDisabledInChannel
-          ? msgCmdsRespondIfNotAllowed
-          : msgCmdsRespondIfNoPerms;
+            ? msgCmdsRespondIfNotAllowed
+            : msgCmdsRespondIfNoPerms;
 
       if (!respond) return message.delete().catch(() => {});
       return MessageCommandError.throw(message, eMsg, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
