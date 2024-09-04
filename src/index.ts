@@ -69,7 +69,7 @@ async function main() {
 
   // Load virtual pieces
 
-  await CommandManager.loadVirtualPieces();
+  await CommandManager.mountListeners();
 
   // Initialize sentry
 
