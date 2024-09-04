@@ -159,7 +159,7 @@ export default class InfractionManager {
       .setAuthor({ name: `${infraction.type} #${infraction.id}`, iconURL: message.author.displayAvatarURL() })
       .setColor(INFRACTION_COLORS[infraction.type])
       .setFields([
-        { name: 'Executor', value: userMentionWithId(infraction.userId) },
+        { name: 'Executor', value: userMentionWithId(infraction.moderatorId) },
         { name: 'Target', value: userMentionWithId(infraction.userId) },
         { name: 'Reason', value: infraction.reason }
       ])
