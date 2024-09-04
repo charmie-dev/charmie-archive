@@ -156,7 +156,7 @@ export default class InfractionManager {
     if (!channel || !channel.isTextBased()) return;
 
     const logEmbed = new EmbedBuilder()
-      .setAuthor({ name: `@${message.author.username} (${message.author.id}) - ${infraction.type} #${infraction.id}`, iconURL: message.author.displayAvatarURL() })
+      .setAuthor({ name: `${infraction.type} #${infraction.id} by @${message.author.username} (${message.author.id})`, iconURL: message.author.displayAvatarURL() })
       .setColor(INFRACTION_COLORS[infraction.type])
       .setFields([
         { name: 'Target', value: userMentionWithId(infraction.userId) },
