@@ -156,17 +156,16 @@ export default class InfractionManager {
     if (!channel || !channel.isTextBased()) return;
 
     const logEmbed = new EmbedBuilder()
-      .setAuthor({ name: `${infraction.type} - #${infraction.id}`, iconURL: message.author.displayAvatarURL() })
+      .setAuthor({ name: `@${message.author.username} (${message.author.id) - ${infraction.type} #${infraction.id}`, iconURL: message.author.displayAvatarURL() })
       .setColor(INFRACTION_COLORS[infraction.type])
       .setFields([
-        { name: 'Moderator', value: userMentionWithId(infraction.moderatorId) },
         { name: 'Target', value: userMentionWithId(infraction.userId) },
         { name: 'Reason', value: infraction.reason }
       ])
       .setTimestamp(Number(infraction.createdAt));
 
     if (infraction.expiresAt)
-      logEmbed.spliceFields(2, 0, {
+      logEmbed.spliceFields(1, 0, {
         name: 'Expiration',
         value: InfractionManager.formatExpiration(infraction.expiresAt)
       });
