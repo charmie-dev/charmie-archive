@@ -7,6 +7,7 @@ import InfractionManager, {
   REASON_MAX_LENGTH,
   REASON_PLACEHOLDER
 } from '../managers/db/InfractionManager';
+import { sendOrReply } from '../utils/index';
 
 @ApplyOptions<CharmieCommand.Options>({
   aliases: ['w', 'strike'],
@@ -73,7 +74,7 @@ export default class Warn extends CharmieCommand {
     InfractionManager.sendNotificationDM({ guild: message.guild, target, infraction });
 
     return Promise.all([
-      reply(message, {
+      sendOrReply(message, {
         embeds: [
           {
             description: `${target.toString()} has been **warned** with ID \`#${infraction.id}\``,
