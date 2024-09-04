@@ -1,5 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { send } from '@sapphire/plugin-editable-commands';
+import { send, reply } from '@sapphire/plugin-editable-commands';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
 import InfractionManager, {
@@ -73,7 +73,7 @@ export default class Warn extends CharmieCommand {
     InfractionManager.sendNotificationDM({ guild: message.guild, target, infraction });
 
     return Promise.all([
-      send(message, {
+      reply(message, {
         embeds: [
           {
             description: `${target.toString()} has been **warned** with ID \`#${infraction.id}\``,
