@@ -1,5 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { send, reply } from '@sapphire/plugin-editable-commands';
+import { send } from '@sapphire/plugin-editable-commands';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
 import InfractionManager, {
@@ -7,7 +7,6 @@ import InfractionManager, {
   REASON_MAX_LENGTH,
   REASON_PLACEHOLDER
 } from '../managers/db/InfractionManager';
-import { sendOrReply } from '../utils/index';
 
 @ApplyOptions<CharmieCommand.Options>({
   aliases: ['w', 'strike'],
@@ -74,7 +73,7 @@ export default class Warn extends CharmieCommand {
     InfractionManager.sendNotificationDM({ guild: message.guild, target, infraction });
 
     return Promise.all([
-      sendOrReply(message, {
+      send(message, {
         embeds: [
           {
             description: `${target.toString()} has been **warned** with ID \`#${infraction.id}\``,
