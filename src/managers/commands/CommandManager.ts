@@ -42,24 +42,24 @@ export default class CommandManager {
     if (!command) return;
   }
 
-  public static async loadVirtualPieces() {
+  public static async mountListeners() {
     await container.stores.loadPiece({
       store: 'listeners',
       name: Events.MessageCommandError,
       piece: MessageCommandError
     });
-    Logger.info(`Loaded virtual command listener piece "${capitalize(Events.MessageCommandError)}"`);
+    Logger.info(`Mounted virtual command listener "${capitalize(Events.MessageCommandError)}"`);
     await container.stores.loadPiece({
       store: 'listeners',
       name: Events.MessageCommandDenied,
       piece: MessageCommandDenied
     });
-    Logger.info(`Loaded virtual command listener piece "${capitalize(Events.MessageCommandDenied)}"`);
+    Logger.info(`Mounted virtual command listener "${capitalize(Events.MessageCommandDenied)}"`);
     await container.stores.loadPiece({
       store: 'listeners',
       name: 'CorePreMessageParser',
       piece: MessageCommandParsed
     });
-    Logger.info(`Loaded virtual command listener piece "${capitalize(Events.PreMessageParsed)}"`);
+    Logger.info(`Mounted virtual command listener "${capitalize(Events.PreMessageParsed)}"`);
   }
 }
