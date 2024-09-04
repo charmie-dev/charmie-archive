@@ -289,6 +289,7 @@ export default class Config extends CharmieCommand {
             }
 
             if (command.category === CommandCategory.Developer) throw 'That command or shortcut does not exist.';
+            if (command.name === this.name) throw 'You cannot disable the config command.';
             if (context.config.msgCmdsDisabledList.includes(command.name)) throw 'That command is already disabled.';
 
             await this.container.db.guilds.update({
