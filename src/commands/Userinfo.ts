@@ -34,6 +34,7 @@ export default class Userinfo extends CharmieCommand {
         iconURL: user.displayAvatarURL()
       })
       .setColor(DEFAULT_EMBED_COLOR)
+      .setThumbnail(user!.displayAvatarURL())
       .setFields(this._formatFields(user))
       .setFooter({ text: `User ID: ${user.id}` });
 
@@ -95,7 +96,7 @@ export default class Userinfo extends CharmieCommand {
         inline: true
       });
 
-    fields.push({ name: 'Avatar', value: `[View Here](${user.displayAvatarURL()})`, inline: true });
+    fields.push({ name: 'Avatar URL', value: `[Click Here](${user.displayAvatarURL()})`, inline: true });
 
     return fields;
   }
