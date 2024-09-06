@@ -21,7 +21,7 @@ import { Container, container } from '@sapphire/framework';
 import { reply, send } from '@sapphire/plugin-editable-commands';
 
 import YAML from 'yaml';
-import fs from 'node:fs';
+import fs from 'fs';
 import ms from 'ms';
 
 import { CommandRoleOverride, GlobalConfig } from '../managers/config/schema';

@@ -166,7 +166,7 @@ export const DM_CHANNEL_PERMISSIONS = new PermissionsBitField(
 ).freeze();
 
 export const ERROR_MESSAGES = {
-  [PRECONDITION_IDENTIFIERS.CommandDisabled]: 'This command is disabled in this guild.',
+  [PRECONDITION_IDENTIFIERS.CommandDisabled]: 'This command is disabled in this server.',
   [PRECONDITION_IDENTIFIERS.CommandDisabledInChannel]: 'This command is disabled in this channel.',
   [PRECONDITION_IDENTIFIERS.NoPermissions]: 'You do not have the required permissions to execute this command.'
 };

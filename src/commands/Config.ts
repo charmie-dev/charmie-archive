@@ -1,11 +1,13 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { reply } from '@sapphire/plugin-editable-commands';
-import { EmbedBuilder } from '@discordjs/builders';
+import { ApplicationCommandRegistry } from '@sapphire/framework';
+import { PermissionFlagsBits } from 'discord.js';
 
 import ms from 'ms';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import { DEFAULT_EMBED_COLOR } from '../utils/constants';
+import GuildCache from '../managers/db/GuildCache';
+import { parseDuration } from '../utils';
+import Logger from '../utils/logger';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Management,
@@ -15,327 +17,310 @@ import { DEFAULT_EMBED_COLOR } from '../utils/constants';
   requiredUserPermissions: 'Administrator'
 })
 export default class Config extends CharmieCommand {
-  public async messageRun(
-    message: CharmieCommand.Message<true>,
-    args: CharmieCommand.Args,
-    context: CharmieCommand.GuildRunContext
-  ) {
-    if (args.finished) throw 'You must provide the name of a subcommand or subcommand group.';
+  public async messageRun() {
+    throw 'This command does not have a message command implementation. Please use `/config` instead.';
+  }
 
-    const group = await args.pick('string').catch(() => {
-      throw 'Invalid subcommand group.';
-    });
+  public registerApplicationCommands(registry: ApplicationCommandRegistry) {
+    registry.registerChatInputCommand(command =>
+      command
+        .setName('config')
+        .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .addSubcommandGroup(group =>
+          group
+            .setName(ConfigSubcommandGroup.Commands)
+            .setDescription('Command related settings.')
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.Prefix)
+                .setDescription('Change or view the prefix for this server.')
+                .addStringOption(opt =>
+                  opt
+                    .setName('new-prefix')
+                    .setDescription('The new prefix to use.')
+                    .setRequired(false)
+                    .setMinLength(1)
+                    .setMaxLength(10)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.AutoDelete)
+                .setDescription('Whether to automatically delete the message that triggers a command.')
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.RespondIfNoPerms)
+                .setDescription(
+                  'Whether to respond to users if they try to run a command without the required permissions.'
+                )
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.RespondIfDisabled)
+                .setDescription('Whether to respond to users if they try to run a disabled command.')
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.RespondIfDisabledInChannel)
+                .setDescription(
+                  'Whether to respond to users if they try to run a command in channel where it is disabled.'
+                )
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.PreserveErrors)
+                .setDescription('Whether to preserve errors sent by the bot.')
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.ErrorDeleteDelay)
+                .setDescription('The delay before deleting the error messages sent by the bot.')
+                .addStringOption(opt =>
+                  opt.setName('duration').setDescription('The duration of the delay.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.ShowExecutor)
+                .setDescription('Whether to show the executor of a command in the embed.')
+                .addBooleanOption(opt =>
+                  opt.setName('value').setDescription('The value for this setting.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.Enable)
+                .setDescription('Enable a command.')
+                .addStringOption(opt =>
+                  opt.setName('command').setDescription('The command to enable.').setRequired(true)
+                )
+            )
+            .addSubcommand(cmd =>
+              cmd
+                .setName(ConfigSubcommand.Disable)
+                .setDescription('Disable a command.')
+                .addStringOption(opt =>
+                  opt.setName('command').setDescription('The command to disable.').setRequired(true)
+                )
+            )
+        )
+    );
+  }
 
-    if (!ConfigCommandGroups.includes(group))
-      throw `Invalid subcommand group. The valid groups are ${ConfigCommandGroups.map(group => `\`${group}\``).join(
-        ', '
-      )}.`;
+  public async chatInputRun(interaction: CharmieCommand.ChatInputCommandInteraction<'cached'>) {
+    const subcommandGroup = interaction.options.getSubcommandGroup();
+    const subcommand = interaction.options.getSubcommand();
 
-    switch (group) {
+    await interaction.deferReply({ ephemeral: true });
+    const config = await GuildCache.get(interaction.guildId);
+
+    switch (subcommandGroup) {
       case ConfigSubcommandGroup.Commands: {
-        if (args.finished) throw 'You must provide the name of a subcommand for the `commands` group.';
-
-        const subcommand = await args.pick('string').catch(() => {
-          throw 'Invalid subcommand.';
-        });
-
-        if (!ConfigCommandCmdGroupSubcommands.includes(subcommand))
-          throw `Invalid subcommand. The valid subcommands are ${ConfigCommandCmdGroupSubcommands.map(
-            subcmd => `\`${subcmd}\``
-          ).join(', ')}.`;
-
         switch (subcommand) {
           case ConfigSubcommand.Prefix: {
-            if (args.finished)
-              return reply(message, `The current prefix for this server is \`${context.config.msgCmdsPrefix}\`.`);
+            const prefix = interaction.options.getString('new-prefix', false);
 
-            const prefix = await args.pick('string').catch(() => {
-              throw 'Invalid prefix.';
-            });
+            if (!prefix) {
+              return interaction.editReply(`The current prefix for this server is \`${config.msgCmdsPrefix}\`.`);
+            }
 
-            if (prefix === context.config.msgCmdsPrefix)
-              throw `The new prefix must be different from the current prefix (\`${context.config.msgCmdsPrefix}\`).`;
-            if (prefix.length > 10) throw 'The new prefix must be less than 10 characters in length.';
-            if (prefix.length < 1) throw 'The new prefix must be at least 1 character in length.';
+            if (prefix === config.msgCmdsPrefix) throw 'The prefix you provided is the same as the current prefix.';
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsPrefix: prefix }
             });
 
-            return reply(message, `The \`prefix\` for this server has been updated to \`${prefix}\`.`);
+            return interaction.editReply(`The prefix for this server has been set to \`${prefix}\`.`);
           }
 
           case ConfigSubcommand.AutoDelete: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsAutoDelete}\`.`
-              );
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsAutoDelete)
-              throw `The new auto-delete setting must be different from the current setting (\`${context.config.msgCmdsAutoDelete}\`).`;
+            if (config.msgCmdsAutoDelete === value) throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsAutoDelete: value }
             });
 
-            return reply(message, `The \`auto-delete\` setting for this server has been updated to \`${value}\`.`);
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
           case ConfigSubcommand.RespondIfNoPerms: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsRespondIfNoPerms}\`.`
-              );
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsRespondIfNoPerms)
-              throw `The new setting must be different from the current setting (\`${context.config.msgCmdsRespondIfNoPerms}\`).`;
+            if (config.msgCmdsRespondIfNoPerms === value)
+              throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsRespondIfNoPerms: value }
             });
 
-            return reply(
-              message,
-              `The \`respond-if-no-permission\` setting for this server has been updated to \`${value}\`.`
-            );
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
           case ConfigSubcommand.RespondIfDisabled: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsRespondIfDisabled}\`.`
-              );
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsRespondIfDisabled)
-              throw `The new setting must be different from the current setting (\`${context.config.msgCmdsRespondIfDisabled}\`).`;
+            if (config.msgCmdsRespondIfDisabled === value)
+              throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsRespondIfDisabled: value }
             });
 
-            return reply(
-              message,
-              `The \`respond-if-disabled\` setting for this server has been updated to \`${value}\`.`
-            );
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
-          case ConfigSubcommand.RespondIfNotInAllowedChannel: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsRespondIfNotAllowed}\`.`
-              );
+          case ConfigSubcommand.RespondIfDisabledInChannel: {
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsRespondIfNotAllowed)
-              throw `The new setting must be different from the current setting (\`${context.config.msgCmdsRespondIfNotAllowed}\`).`;
+            if (config.msgCmdsRespondIfNotAllowed === value)
+              throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsRespondIfNotAllowed: value }
             });
 
-            return reply(
-              message,
-              `The \`respond-if-not-in-allowed-channel\` setting for this server has been updated to \`${value}\`.`
-            );
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
           case ConfigSubcommand.PreserveErrors: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsPreserveErrors}\`.`
-              );
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsPreserveErrors)
-              throw `The new setting must be different from the current setting (\`${context.config.msgCmdsPreserveErrors}\`).`;
+            if (config.msgCmdsPreserveErrors === value)
+              throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsPreserveErrors: value }
             });
 
-            return reply(message, `The \`preserve-errors\` setting for this server has been updated to \`${value}\`.`);
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
           case ConfigSubcommand.ShowExecutor: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${context.config.msgCmdsShowExecutor}\`.`
-              );
+            const value = interaction.options.getBoolean('value', true);
 
-            const value = await args.pick('boolean').catch(() => {
-              throw 'Invalid boolean value.';
-            });
-
-            if (value === context.config.msgCmdsShowExecutor)
-              throw `The new setting must be different from the current setting (\`${context.config.msgCmdsShowExecutor}\`).`;
+            if (config.msgCmdsShowExecutor === value)
+              throw `The value for this setting is already set to \`${value}\`.`;
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsShowExecutor: value }
             });
 
-            return reply(message, `The \`show-executor\` setting for this server has been updated to \`${value}\`.`);
+            return interaction.editReply(`The value for this setting has been set to \`${value}\`.`);
           }
 
           case ConfigSubcommand.ErrorDeleteDelay: {
-            if (args.finished)
-              return reply(
-                message,
-                `The current setting for this server is set to \`${ms(context.config.msgCmdsErrorDeleteDelay, {
-                  long: true
-                })}\`.`
-              );
+            const uDuration = interaction.options.getString('duration', true);
 
-            const duration = await args.pick('duration').catch(() => {
-              throw 'Invalid duration value.';
-            });
+            const duration = parseDuration(uDuration);
+            if (isNaN(duration)) throw 'Invalid duration.';
 
-            if (duration === context.config.msgCmdsErrorDeleteDelay)
-              throw `The new setting must be different from the current setting (\`${ms(
-                context.config.msgCmdsErrorDeleteDelay,
-                {
-                  long: true
-                }
-              )}\`).`;
+            if (config.msgCmdsErrorDeleteDelay === duration)
+              throw `The value for this setting is already set to \`${ms(duration, { long: true })}\`.`;
 
-            if (duration === 'permanent' || duration === 0) throw 'You cannot set the error delete delay to permanent.';
-            if ((duration as number) < 1000) throw 'The error delete delay cannot be less than 1 second.';
-            if ((duration as number) > 30000) throw 'The error delete delay cannot be longer than 30 seconds.';
+            if (duration === 0) throw 'You cannot set the error delete delay to permanent.';
+            if (duration < 1000) throw 'The error delete delay cannot be less than 1 second.';
+            if (duration > 30000) throw 'The error delete delay cannot be longer than 30 seconds.';
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
-              data: { msgCmdsErrorDeleteDelay: duration as number }
+              where: { id: interaction.guildId },
+              data: { msgCmdsErrorDeleteDelay: duration }
             });
 
-            return reply(
-              message,
-              `The \`error-delete-delay\` setting for this server has been updated to \`${ms(duration as number, {
-                long: true
-              })}\`.`
+            return interaction.editReply(
+              `The value for this setting has been set to \`${ms(duration, { long: true })}\`.`
             );
           }
 
-          case ConfigSubcommand.Disable: {
-            const disabledShortcuts = await this.container.db.commands.findMany({
-              where: { guildId: message.guildId, enabled: false }
-            });
-
-            const disabledCommands = context.config.msgCmdsDisabledList;
-
-            if (args.finished) {
-              const embed = new EmbedBuilder().setColor(DEFAULT_EMBED_COLOR).setFields([
-                {
-                  name: 'Disabled Built-In Commands',
-                  value: disabledCommands.length ? disabledCommands.map(c => `\`${c}\``).join(', ') : 'None'
-                },
-                {
-                  name: 'Disabled Shortcut Commands',
-                  value: disabledShortcuts.length ? disabledShortcuts.map(c => `\`${c.name}\``).join(', ') : 'None'
-                }
-              ]);
-
-              return reply(message, { embeds: [embed] });
-            }
-
-            const commandName = await args.pick('string').catch(() => {
-              throw 'Invalid command or shortcut name.';
-            });
+          case ConfigSubcommand.Enable: {
+            const commandName = interaction.options.getString('command', true);
 
             const command = this.container.stores.get('commands').get(commandName);
-            const shortcut = await this.container.db.commands.findUnique({
-              where: { guildId_name: { guildId: message.guildId, name: commandName } }
+            const customCommand = await this.container.db.commands.findUnique({
+              where: { guildId_name: { guildId: interaction.guildId, name: commandName } }
             });
-            if (!command) {
-              if (!shortcut) throw 'That command or shortcut does not exist.';
 
-              if (!shortcut.enabled) throw 'That shortcut is already disabled.';
+            if (!command) {
+              if (!customCommand) throw 'That command or shortcut does not exist.';
+              if (customCommand.enabled) throw 'That shortcut is already enabled.';
 
               await this.container.db.commands.update({
-                where: { guildId_name: { guildId: message.guildId, name: shortcut.name } },
+                where: { guildId_name: { guildId: interaction.guildId, name: commandName } },
+                data: { enabled: true }
+              });
+
+              return interaction.editReply(`The shortcut \`${commandName}\` has been enabled.`);
+            }
+
+            if (command.category === CommandCategory.Developer) throw 'That command or shortcut does not exist.';
+            if (!config.msgCmdsDisabledList.includes(command.name)) throw 'That command is already enabled.';
+
+            config.msgCmdsDisabledList.splice(config.msgCmdsDisabledList.indexOf(command.name), 1);
+
+            await this.container.db.guilds.update({
+              where: { id: interaction.guildId },
+              data: { msgCmdsDisabledList: config.msgCmdsDisabledList }
+            });
+
+            return interaction.editReply(`The \`${command.name}\` command has been enabled.`);
+          }
+
+          case ConfigSubcommand.Disable: {
+            const commandName = interaction.options.getString('command', true);
+
+            const command = this.container.stores.get('commands').get(commandName);
+            const customCommand = await this.container.db.commands.findUnique({
+              where: { guildId_name: { guildId: interaction.guildId, name: commandName } }
+            });
+
+            if (!command) {
+              if (!customCommand) throw 'That command or shortcut does not exist.';
+
+              if (!customCommand.enabled) throw 'That shortcut is already disabled.';
+
+              await this.container.db.commands.update({
+                where: { guildId_name: { guildId: interaction.guildId, name: commandName } },
                 data: { enabled: false }
               });
 
-              return reply(message, { content: `The \`${commandName}\` shortcut has been disabled.`, embeds: [] });
+              return interaction.editReply(`The shortcut \`${commandName}\` has been disabled.`);
             }
 
             if (command.category === CommandCategory.Developer) throw 'That command or shortcut does not exist.';
             if (command.name === this.name) throw 'You cannot disable the config command.';
-            if (context.config.msgCmdsDisabledList.includes(command.name)) throw 'That command is already disabled.';
+            if (config.msgCmdsDisabledList.includes(command.name)) throw 'That command is already disabled.';
 
             await this.container.db.guilds.update({
-              where: { id: message.guildId },
+              where: { id: interaction.guildId },
               data: { msgCmdsDisabledList: { push: command.name } }
             });
 
-            return reply(message, `The \`${command.name}\` command has been disabled.`);
-          }
-
-          case ConfigSubcommand.Enable: {
-            if (args.finished) throw 'You must specify a command or shortcut to enable.';
-
-            const commandName = await args.pick('string').catch(() => {
-              throw 'Invalid command or shortcut name.';
-            });
-
-            const command = this.container.stores.get('commands').get(commandName);
-            const shortcut = await this.container.db.commands.findUnique({
-              where: { guildId_name: { guildId: message.guildId, name: commandName } }
-            });
-
-            if (!command) {
-              if (!shortcut) throw 'That command or shortcut does not exist.';
-
-              if (shortcut.enabled) throw 'That shortcut is already enabled.';
-
-              await this.container.db.commands.update({
-                where: { guildId_name: { guildId: message.guildId, name: shortcut.name } },
-                data: { enabled: true }
-              });
-
-              return reply(message, `The \`${shortcut.name}\` shortcut has been enabled.`);
-            }
-
-            if (command.category === CommandCategory.Developer) throw 'That command or shortcut does not exist.';
-            if (!context.config.msgCmdsDisabledList.includes(command.name)) throw 'That command is already enabled.';
-
-            context.config.msgCmdsDisabledList.splice(context.config.msgCmdsDisabledList.indexOf(command.name), 1);
-
-            await this.container.db.guilds.update({
-              where: { id: message.guildId },
-              data: { msgCmdsDisabledList: context.config.msgCmdsDisabledList }
-            });
-
-            return reply(message, `The \`${command.name}\` command has been enabled.`);
+            return interaction.editReply(`The \`${command.name}\` command has been disabled.`);
           }
         }
       }
@@ -344,7 +329,8 @@ export default class Config extends CharmieCommand {
 }
 
 enum ConfigSubcommandGroup {
-  Commands = 'commands'
+  Commands = 'commands',
+  Logging = 'logging'
 }
 
 enum ConfigSubcommand {
@@ -352,24 +338,11 @@ enum ConfigSubcommand {
   AutoDelete = 'auto-delete',
   RespondIfNoPerms = 'respond-if-no-perms',
   RespondIfDisabled = 'respond-if-disabled',
-  RespondIfNotInAllowedChannel = 'respond-if-not-in-allowed-channel',
+  RespondIfDisabledInChannel = 'respond-if-disabled-in-channel',
   PreserveErrors = 'preserve-errors',
   ShowExecutor = 'show-executor',
   ErrorDeleteDelay = 'error-delete-delay',
   Disable = 'disable',
-  Enable = 'enable'
+  Enable = 'enable',
+  SetChannel = 'set-channel'
 }
-
-const ConfigCommandGroups: string[] = ['commands'];
-const ConfigCommandCmdGroupSubcommands: string[] = [
-  'prefix',
-  'auto-delete',
-  'respond-if-no-perms',
-  'respond-if-disabled',
-  'respond-if-not-in-allowed-channel',
-  'preserve-errors',
-  'show-executor',
-  'error-delete-delay',
-  'disable',
-  'enable'
-];

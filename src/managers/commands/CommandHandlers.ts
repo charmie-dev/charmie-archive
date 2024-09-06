@@ -1,4 +1,6 @@
 import {
+  ChatInputCommandDeniedPayload,
+  ChatInputCommandErrorPayload,
   Events,
   Identifiers,
   Listener,
@@ -9,7 +11,7 @@ import {
 } from '@sapphire/framework';
 import { Stopwatch } from '@sapphire/stopwatch';
 import { isDMChannel } from '@sapphire/discord.js-utilities';
-import { Colors, Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
 import { PRECONDITION_IDENTIFIERS } from '../../utils/constants';
 import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from './Command';
@@ -28,7 +30,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
   public async run(uError: UserError, { message }: MessageCommandErrorPayload) {
     if (typeof uError !== 'string') {
       const sentryId = Sentry.captureException(uError);
-      Logger.error(`Message command error: ${uError}`, uError);
+      Logger.error(`[${sentryId}] Message command error:`, uError);
       return MessageCommandError.throw(
         message,
         `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`,
@@ -47,7 +49,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
   /**
    * Replies to the message with an error embed.
    *
-   * @param message The message to reply to (will fallback to sending if the message can't be replied to)
+   * @param message The message (or interaction) to reply to (will fallback to sending if the message can't be replied to)
    * @param error The error message to reply with
    * @param preserve Whether to preserve the message or not
    * @param delay The delay before deleting the message in milliseconds
@@ -56,20 +58,32 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
    */
 
   public static async throw(
-    message: Message,
+    message: Message | ChatInputCommandInteraction,
     error: string,
     preserve: boolean = false,
     delay: number = 7500
   ): Promise<void> {
-    const errorMsg = await sendOrReply(message, {
-      embeds: [{ description: error, color: Colors.Red }]
-    });
+    if (message instanceof Message) {
+      const errorMsg = await sendOrReply(message, {
+        embeds: [{ description: error, color: Colors.Red }]
+      });
 
-    if (!preserve) {
-      setTimeout(() => {
-        errorMsg.delete().catch(() => {});
-        message.delete().catch(() => {});
-      }, delay);
+      if (!preserve) {
+        setTimeout(() => {
+          errorMsg.delete().catch(() => {});
+          message.delete().catch(() => {});
+        }, delay);
+      }
+    } else if (message instanceof ChatInputCommandInteraction) {
+      if (!message.deferred && !message.replied)
+        await message.reply({
+          embeds: [{ description: error, color: Colors.Red }],
+          ephemeral: true
+        });
+      else
+        await message.editReply({
+          embeds: [{ description: error, color: Colors.Red }]
+        });
     }
   }
 }
@@ -295,5 +309,34 @@ export class MessageCommandParsed extends Listener<typeof Events.PreMessageParse
 
   private getCommandPrefix(content: string, prefix: string | RegExp): string {
     return typeof prefix === 'string' ? prefix : prefix.exec(content)![0];
+  }
+}
+
+export class ChatInputCommandError extends Listener<typeof Events.ChatInputCommandError> {
+  public constructor(context: Listener.LoaderContext) {
+    super(context, { event: Events.ChatInputCommandError });
+  }
+
+  public async run(error: UserError, { interaction }: ChatInputCommandErrorPayload) {
+    if (typeof error !== 'string') {
+      const sentryId = Sentry.captureException(error);
+      Logger.error(`[${sentryId}] Chat input command error:`, error);
+      return MessageCommandError.throw(
+        interaction,
+        `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`
+      );
+    }
+
+    return MessageCommandError.throw(interaction, error);
+  }
+}
+
+export class ChatInputCommandDenied extends Listener<typeof Events.ChatInputCommandDenied> {
+  public constructor(context: Listener.LoaderContext) {
+    super(context, { event: Events.ChatInputCommandDenied });
+  }
+
+  public async run({ message }: UserError, { interaction }: ChatInputCommandDeniedPayload) {
+    return MessageCommandError.throw(interaction, message);
   }
 }

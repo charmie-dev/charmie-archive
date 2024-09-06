@@ -1,13 +1,27 @@
 import { Message } from 'discord.js';
 import { container, Events } from '@sapphire/framework';
 
-import { MessageCommandError, MessageCommandDenied, MessageCommandParsed } from './CommandHandlers';
+import {
+  MessageCommandError,
+  MessageCommandDenied,
+  MessageCommandParsed,
+  ChatInputCommandError,
+  ChatInputCommandDenied
+} from './CommandHandlers';
 import { capitalize } from '../../utils';
 
 import GuildCache from '../db/GuildCache';
 import Logger from '../../utils/logger';
 
 export default class CommandManager {
+  private static listeners: ListenerConfig[] = [
+    { name: Events.MessageCommandError, piece: MessageCommandError },
+    { name: Events.MessageCommandDenied, piece: MessageCommandDenied },
+    { name: 'CorePreMessageParser', piece: MessageCommandParsed },
+    { name: Events.ChatInputCommandError, piece: ChatInputCommandError },
+    { name: Events.ChatInputCommandDenied, piece: ChatInputCommandDenied }
+  ];
+
   public static checkRawMessage(message: Message) {
     if (!message.inGuild() || message.author.bot || message.webhookId || !message.content) return;
     return CommandManager.parseRawMessage(message);
@@ -43,23 +57,18 @@ export default class CommandManager {
   }
 
   public static async mountListeners() {
-    await container.stores.loadPiece({
-      store: 'listeners',
-      name: Events.MessageCommandError,
-      piece: MessageCommandError
-    });
-    Logger.info(`Mounted virtual command listener "${capitalize(Events.MessageCommandError)}"`);
-    await container.stores.loadPiece({
-      store: 'listeners',
-      name: Events.MessageCommandDenied,
-      piece: MessageCommandDenied
-    });
-    Logger.info(`Mounted virtual command listener "${capitalize(Events.MessageCommandDenied)}"`);
-    await container.stores.loadPiece({
-      store: 'listeners',
-      name: 'CorePreMessageParser',
-      piece: MessageCommandParsed
-    });
-    Logger.info(`Mounted virtual command listener "${capitalize(Events.PreMessageParsed)}"`);
+    const mountPromises = this.listeners.map(listener => this.mountListener(listener));
+    await Promise.all(mountPromises);
   }
+
+  private static async mountListener({ name, piece }: ListenerConfig) {
+    await container.stores.loadPiece({ store: 'listeners', name, piece });
+    const capitalizedName = name === 'CorePreMessageParser' ? Events.PreMessageParsed : name;
+    Logger.info(`Mounted command listener "${capitalize(capitalizedName)}"`);
+  }
+}
+
+interface ListenerConfig {
+  name: string;
+  piece: any;
 }

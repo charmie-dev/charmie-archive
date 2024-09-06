@@ -30,7 +30,7 @@ developers: ['{dev id}', '{dev id 2}'] # An array of user IDs permitted to run c
 
 # Running the bot
 
-Ensure that your `.env` and `charmie.cfg.yml` files are present and properly configured.
+Ensure that your `.env` and `charmie.cfg.yml` files are present and properly configured. One way to validate the global configuration is to levrage bun's test sytem with `bun test`.
 
 ## Initially
 
@@ -63,9 +63,7 @@ Ensure that your `.env` and `charmie.cfg.yml` files are present and properly con
 
 This bot was created & is maintained by [redicides](https://github.com/redicides), however, it is inspired by multiple other bots and contains code from some of them. The credits for these bots are listed below.
 
-## [[RoDis Infrastructure] Azalea](https://github.com/Rodis-Infrastructure/Azalea)
-
-- The configuration system, message caching system, cron management system, as well as a number of utility functions from Azalea are used in Charmie.
+### [[RoDis Infrastructure] Azalea](https://github.com/Rodis-Infrastructure/Azalea)
 
 # Important
 

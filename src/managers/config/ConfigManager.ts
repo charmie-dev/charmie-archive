@@ -1,6 +1,6 @@
 import { fromZodError } from 'zod-validation-error';
 
-import fs from 'node:fs';
+import fs from 'fs';
 
 import { readYamlFile } from '../../utils';
 import { GlobalConfig, globalConfigSchema } from './schema';

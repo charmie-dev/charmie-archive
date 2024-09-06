@@ -1,4 +1,4 @@
-import { SapphireClient, Events } from '@sapphire/framework';
+import { SapphireClient, Events, LogLevel } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
 import { type Message } from 'discord.js';
 import { join } from 'node:path';
@@ -28,11 +28,17 @@ export class CharmieClient extends SapphireClient {
 
       // Application command registry options
 
-      loadApplicationCommandRegistriesStatusListeners: false,
+      loadApplicationCommandRegistriesStatusListeners: true,
 
       // Default regex prefix - Hardcoded to avoid adding to global config file
 
       regexPrefix: /^(hey +)?(charmie|ch)[,! ]/i,
+
+      // Debug logger level
+
+      logger: {
+        level: LogLevel.None
+      },
 
       /**
        * Fetches the prefix for the given message.

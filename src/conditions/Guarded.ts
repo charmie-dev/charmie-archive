@@ -1,5 +1,5 @@
 import { Precondition } from '@sapphire/framework';
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 
 import { PRECONDITION_IDENTIFIERS } from '../utils/constants';
 
@@ -8,6 +8,10 @@ import ConfigManager from '../managers/config/ConfigManager';
 export default class GuardedPrecondition extends Precondition {
   public async messageRun(message: Message) {
     return this.check(message.author.id);
+  }
+
+  public async chatInputRun(interaction: ChatInputCommandInteraction) {
+    return this.check(interaction.user.id);
   }
 
   private async check(id: string) {

@@ -1,6 +1,13 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Precondition } from '@sapphire/framework';
-import { GuildTextBasedChannel, PermissionFlagsBits, PermissionsBitField, type Message } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  ContextMenuCommandInteraction,
+  GuildTextBasedChannel,
+  PermissionFlagsBits,
+  PermissionsBitField,
+  type Message
+} from 'discord.js';
 import { Prisma } from '@prisma/client';
 
 import { CommandChannelOverride, CommandRoleOverride } from '../managers/config/schema';
@@ -25,6 +32,12 @@ export default class PermissionsPrecondition extends Precondition {
     return userPermissionsResult.isErr()
       ? userPermissionsResult
       : this.checkChannelPermissions(message as Message<true>, command);
+  }
+
+  // Handled by discord's permission system
+
+  public async chatInputRun() {
+    return this.ok();
   }
 
   private shouldSkipChecks(message: Message, command: CharmieMessageCommand): boolean {
