@@ -42,7 +42,7 @@ Ensure that your `.env` and `charmie.cfg.yml` files are present and properly con
 2. Next, we'll need to make sure that your PostgreSQL database matches the prisma schema. To do this, run `bun db:push`.
    Should any errors occur, please ensure that your database is set up correctly.
 
-3. Once your database is set up, we need to build the project. To do this, run `bun build`.
+3. Once your database is set up, we need to build the project. To do this, run `bun run build`.
    This will compile the TypeScript code into JavaScript.
 
 4. Finally, we need to start the bot (aka run the compiled code). To do this, run `bun start` or `bun start:pm2` if you're using PM2.
@@ -55,7 +55,7 @@ Ensure that your `.env` and `charmie.cfg.yml` files are present and properly con
 1. Depending on whether the source files have been updated, you may need to run `bun install` to install any new dependencies, as well as `bun db:push` to update the database schema.
    If there are any new updates, head over to the `releases` page for more information.
 
-2. Next, we'll need to re build the project (aka compile the TypeScript code to JavaScript). It is recommended that you first get rid of the old `dist` directory. To build the project, simply run `bun build`.
+2. Next, we'll need to re build the project (aka compile the TypeScript code to JavaScript). It is recommended that you first get rid of the old `dist` directory. To build the project, simply run `bun run build`.
 
 3. Finally, we just need to restart the bot. To do this, run either `bun start` or `bun start:pm2` if you're using PM2.
 
