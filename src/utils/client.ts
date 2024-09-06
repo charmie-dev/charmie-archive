@@ -1,4 +1,4 @@
-import { SapphireClient, Events, LogLevel } from '@sapphire/framework';
+import { SapphireClient, Events, LogLevel, ApplicationCommandRegistries, RegisterBehavior } from '@sapphire/framework';
 import { getRootData } from '@sapphire/pieces';
 import { type Message } from 'discord.js';
 import { join } from 'node:path';
@@ -34,7 +34,7 @@ export class CharmieClient extends SapphireClient {
 
       regexPrefix: /^(hey +)?(charmie|ch)[,! ]/i,
 
-      // Debug logger level
+      // Logger level
 
       logger: {
         level: LogLevel.None
@@ -118,5 +118,10 @@ export class CharmieClient extends SapphireClient {
      */
 
     this.stores.get('listeners').registerPath(join(this.rootData.root, 'events'));
+  }
+
+  override async login(token: string) {
+    ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
+    return super.login(token);
   }
 }
