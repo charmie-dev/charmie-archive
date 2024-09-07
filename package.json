@@ -6,12 +6,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "bun dist/index.js",
+    "start": "bun run dist/index.js",
     "start:pm2": "pm2 start process.json",
     "db:push": "bunx prisma db push",
     "db:generate": "bunx prisma generate",
-    "project:format": "bunx prettier --write src/**/*.ts",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org codys-dev-stuff --project charmie ./dist && sentry-cli sourcemaps upload --org codys-dev-stuff --project charmie ./dist"
+    "project:format": "bunx prettier --write src/**/*.ts"
   },
   "repository": {
     "type": "git",

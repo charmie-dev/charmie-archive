@@ -12,6 +12,7 @@ node_modules
 
 charmie.cfg.yml
 
-# Sentry Config File
+# Sentry stuff
 
 .sentryclirc
+sourcemaps.bat

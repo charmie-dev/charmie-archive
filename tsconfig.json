@@ -1,28 +1,23 @@
 {
-    "compilerOptions": {
-      "pretty": true,
-      "module": "CommonJS",
-      "target": "ESNext",
-      "lib": ["ESNext"],
-      "types": ["bun-types"],
-      "outDir": "dist",
-      "rootDir": "src",
-      "strict": true,
-      "alwaysStrict": true,
-      "removeComments": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "importHelpers": true,
-      "experimentalDecorators": true,
-      "allowSyntheticDefaultImports": true,
-
-      // Sentry stuff
-      "sourceMap": true,
-      "inlineSources": true,
-      // Set `sourceRoot` to  "/" to strip the build path prefix
-      // from generated source code references.
-      // This improves issue grouping in Sentry.
-      "sourceRoot": "/"
-    },
-    "exclude": ["dist", "node_modules", "tests"]
+  "compilerOptions": {
+    "pretty": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["bun-types"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "alwaysStrict": true,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/"
+  },
+  "exclude": ["dist", "node_modules", "tests", "prisma"]
 }
