@@ -5,16 +5,17 @@ import { PermissionFlagsBits } from 'discord.js';
 import ms from 'ms';
 
 import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import GuildCache from '../managers/db/GuildCache';
 import { parseDuration } from '../utils';
-import Logger from '../utils/logger';
+
+import GuildCache from '../managers/db/GuildCache';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Management,
   description: 'Configure the bot.',
   aliases: ['settings'],
   usage: '<group> <subcommand> <...options>',
-  requiredUserPermissions: 'Administrator'
+  requiredUserPermissions: 'Administrator',
+  slashOnly: true
 })
 export default class Config extends CharmieCommand {
   public async messageRun() {

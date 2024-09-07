@@ -40,6 +40,12 @@ export class CharmieCommand extends Command {
   public guarded: boolean;
 
   /**
+   * Whether the command is only available as a slash command.
+   */
+
+  public readonly slashOnly: boolean;
+
+  /**
    * The mapped flags for the command.
    *
    * Each of these flags is applied to the flags option, however, we use a different type for better option for better readability.
@@ -73,6 +79,7 @@ export class CharmieCommand extends Command {
     this.guarded = options.guarded ?? false;
     this.mappedFlags = options.mappedFlags ?? [];
     this.mappedOptions = options.mappedOptions ?? [];
+    this.slashOnly = options.slashOnly ?? false;
   }
 
   /**
@@ -154,6 +161,12 @@ export interface CharmieCommandOptions extends Command.Options {
    */
 
   readonly guarded?: boolean;
+
+  /**
+   * Whether the command is only available as a slash command.
+   */
+
+  readonly slashOnly?: boolean;
 
   /**
    * The mapped flags for the command.

@@ -55,7 +55,7 @@ export default class Help extends CharmieCommand {
 
   private displayCommandHelp(message: CharmieCommand.Message, command: CharmieCommand, prefix: string) {
     const embed = this.createBaseEmbed()
-      .setTitle(command.name)
+      .setTitle(`${command.slashOnly ? `(Slash Only) ` : ''}${command.name}`)
       .setDescription(command.description ?? 'No description provided.')
       .setFooter({ text: '<> = required, [] = optional' });
 
@@ -100,7 +100,10 @@ export default class Help extends CharmieCommand {
     const { flags, options, permissions } = this._getAdditionalInfo(command);
 
     if (flags || options || permissions)
-      embed.addFields({ name: 'Additional', value: this._formatAdditionalInfo(flags, options, permissions) });
+      embed.addFields({
+        name: 'Additional',
+        value: this._formatAdditionalInfo(flags, options, permissions)
+      });
 
     return embed;
   }
@@ -153,6 +156,6 @@ export default class Help extends CharmieCommand {
   private _formatAdditionalInfo(flags: string | null, options: string | null, permissions: string | null): string {
     return `${permissions ? `Permissions: ${permissions}` : ''}${flags ? `\nFlags: ${flags}` : ''}${
       options ? `\nOptions: ${options}` : ''
-    }`;
+    };`;
   }
 }
