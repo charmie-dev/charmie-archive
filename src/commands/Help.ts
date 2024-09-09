@@ -156,6 +156,6 @@ export default class Help extends CharmieCommand {
   private _formatAdditionalInfo(flags: string | null, options: string | null, permissions: string | null): string {
     return `${permissions ? `Permissions: ${permissions}` : ''}${flags ? `\nFlags: ${flags}` : ''}${
       options ? `\nOptions: ${options}` : ''
-    };`;
+    }`;
   }
 }
