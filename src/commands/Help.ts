@@ -147,7 +147,7 @@ export default class Help extends CharmieCommand {
       } else if (Array.isArray(command.usage)) {
         usage = command.usage.map(usage => `\`${prefix}${command.name} ${usage}\``).join('\n');
       }
-        usage.replaceAll(
+        usage!.replaceAll(
       '<@1272985906781098124>',
       message.inGuild() ? `@${message.guild.members.me!.displayName}` : `@${this.container.client.user!.tag}`
     );
