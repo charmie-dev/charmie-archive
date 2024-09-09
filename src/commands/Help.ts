@@ -59,7 +59,7 @@ export default class Help extends CharmieCommand {
       .setDescription(command.description ?? 'No description provided.')
       .setFooter({ text: '<> = required, [] = optional' });
 
-    this.formatCommandEmbedFields(embed, command, prefix);
+    this.formatCommandEmbedFields(message, embed, command, prefix);
 
     return reply(message, { embeds: [embed] });
   }
@@ -91,8 +91,8 @@ export default class Help extends CharmieCommand {
       .setColor(DEFAULT_EMBED_COLOR);
   }
 
-  private formatCommandEmbedFields(embed: EmbedBuilder, command: CharmieCommand, prefix: string): EmbedBuilder {
-    const { usage, aliases } = this._getUsageAndAliases(prefix, command);
+  private formatCommandEmbedFields(message: CharmieCommand.Message, embed: EmbedBuilder, command: CharmieCommand, prefix: string): EmbedBuilder {
+    const { usage, aliases } = this._getUsageAndAliases(message, prefix, command);
 
     if (usage) embed.addFields({ name: 'Usage', value: usage, inline: true });
     if (aliases) embed.addFields({ name: 'Aliases', value: aliases, inline: true });
@@ -134,6 +134,7 @@ export default class Help extends CharmieCommand {
   }
 
   private _getUsageAndAliases(
+    message: CharmieCommand.Message,
     prefix: string,
     command: CharmieCommand
   ): { usage: string | null; aliases: string | null } {
