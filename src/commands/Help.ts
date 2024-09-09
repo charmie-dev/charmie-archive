@@ -24,7 +24,7 @@ export default class Help extends CharmieCommand {
     context: CharmieCommand.RunContext
   ) {
     const prefix = this.getCommandPrefix(context).replaceAll(
-      '<@1272985906781098124>',
+      `<@${this.container.client.user!.id}>`,
       message.inGuild() ? `@${message.guild.members.me!.displayName}` : `@${this.container.client.user!.tag}`
     );
 
@@ -148,7 +148,7 @@ export default class Help extends CharmieCommand {
         usage = command.usage.map(usage => `\`${prefix}${command.name} ${usage}\``).join('\n');
       }
         usage!.replaceAll(
-      '<@1272985906781098124>',
+      `<@${this.container.client.user!.id}>`,
       message.inGuild() ? `@${message.guild.members.me!.displayName}` : `@${this.container.client.user!.tag}`
     );
     }
