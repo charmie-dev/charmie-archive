@@ -13,12 +13,12 @@ import { Stopwatch } from '@sapphire/stopwatch';
 import { isDMChannel } from '@sapphire/discord.js-utilities';
 import { ChatInputCommandInteraction, Colors, Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
-import { PRECONDITION_IDENTIFIERS } from '../../utils/constants';
+import { PRECONDITION_IDENTIFIERS } from '@utils/constants';
 import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from './Command';
-import { sendOrReply } from '../../utils';
+import { sendOrReply } from '@utils/index';
 import { Sentry } from '../../index';
 
-import Logger from '../../utils/logger';
+import Logger from '@utils/logger';
 import GuildCache from '../db/GuildCache';
 import CommandManager from './CommandManager';
 
@@ -112,8 +112,8 @@ export class MessageCommandDenied extends Listener<typeof Events.MessageCommandD
         identifier === PRECONDITION_IDENTIFIERS.CommandDisabled
           ? msgCmdsRespondIfDisabled
           : identifier === PRECONDITION_IDENTIFIERS.CommandDisabledInChannel
-            ? msgCmdsRespondIfNotAllowed
-            : msgCmdsRespondIfNoPerms;
+          ? msgCmdsRespondIfNotAllowed
+          : msgCmdsRespondIfNoPerms;
 
       if (!respond) return message.delete().catch(() => {});
       return MessageCommandError.throw(message, eMsg, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);

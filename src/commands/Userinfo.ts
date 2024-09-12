@@ -3,9 +3,9 @@ import { EmbedBuilder, EmbedField, GuildMember, Snowflake, time, TimestampStyles
 import { InfractionType } from '@prisma/client';
 import { reply } from '@sapphire/plugin-editable-commands';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import { DEFAULT_EMBED_COLOR } from '../utils/constants';
-import { permissionsCheck } from '../utils';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
+import { DEFAULT_EMBED_COLOR } from '@utils/constants';
+import { permissionsCheck } from '@utils/index';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Utility,

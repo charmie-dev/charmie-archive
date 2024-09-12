@@ -1,11 +1,11 @@
 import { Precondition } from '@sapphire/framework';
 import { ApplyOptions } from '@sapphire/decorators';
-import { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
-import { PRECONDITION_IDENTIFIERS } from '../utils/constants';
-import { CharmieMessageCommand, CommandCategory } from '../managers/commands/Command';
+import { PRECONDITION_IDENTIFIERS } from '@utils/constants';
+import { CharmieMessageCommand, CommandCategory } from '@managers/commands/Command';
 
-import GuildCache from '../managers/db/GuildCache';
+import GuildCache from '@managers/db/GuildCache';
 
 @ApplyOptions<Precondition.Options>({ position: 10 })
 export default class EnabledPrecondition extends Precondition {
@@ -13,8 +13,8 @@ export default class EnabledPrecondition extends Precondition {
     return command.category === CommandCategory.Developer
       ? this.ok()
       : message.inGuild()
-        ? this.check(message.guildId, command)
-        : this.ok();
+      ? this.check(message.guildId, command)
+      : this.ok();
   }
 
   // Handled by discord's permission system

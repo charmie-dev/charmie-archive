@@ -3,13 +3,13 @@ import { send } from '@sapphire/plugin-editable-commands';
 
 import ms from 'ms';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
 
 import InfractionManager, {
   INFRACTION_COLORS,
   REASON_MAX_LENGTH,
   REASON_PLACEHOLDER
-} from '../managers/db/InfractionManager';
+} from '@managers/db/InfractionManager';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Moderation,

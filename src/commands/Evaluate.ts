@@ -2,9 +2,9 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, codeBlock } from 'discord.js';
 import { reply } from '@sapphire/plugin-editable-commands';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import { createHastebinPaste } from '../utils';
-import { EVAL_CMD_MFLAGS, EVAL_CMD_MOPTIONS } from '../utils/constants';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
+import { createHastebinPaste } from '@utils/index';
+import { EVAL_CMD_MFLAGS, EVAL_CMD_MOPTIONS } from '@utils/constants';
 
 import util from 'node:util';
 import ms from 'ms';

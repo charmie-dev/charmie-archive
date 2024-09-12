@@ -4,10 +4,10 @@ import { PermissionFlagsBits } from 'discord.js';
 
 import ms from 'ms';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import { parseDuration } from '../utils';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
+import { parseDuration } from '@utils/index';
 
-import GuildCache from '../managers/db/GuildCache';
+import GuildCache from '@managers/db/GuildCache';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Management,

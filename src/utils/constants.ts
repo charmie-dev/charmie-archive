@@ -8,7 +8,7 @@ import {
   PermissionsBitField,
   Sweepers
 } from 'discord.js';
-import { MappedFlag, MappedOption } from '../managers/commands/Command';
+import { MappedFlag, MappedOption } from '@managers/commands/Command';
 
 /**
  * This file contains all the constants used throughout the bot.

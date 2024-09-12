@@ -1,8 +1,8 @@
-import { Argument, container } from '@sapphire/framework';
+import { Argument } from '@sapphire/framework';
 
 import ms from 'ms';
 
-import { parseDuration } from '../utils';
+import { parseDuration } from '@utils/index';
 
 export class DurationArgument extends Argument<number | string | null> {
   public run(parameter: string, context: Argument.Context) {

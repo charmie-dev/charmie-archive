@@ -2,7 +2,7 @@ import { Infractions as DatabaseInfraction, Guilds as DatabaseGuild, InfractionT
 import { container } from '@sapphire/framework';
 import { Colors, EmbedBuilder, Guild, GuildMember, Message, time, User } from 'discord.js';
 
-import { capitalize, hierarchyCheck, userMentionWithId } from '../../utils';
+import { capitalize, hierarchyCheck, userMentionWithId } from '@utils/index';
 
 export default class InfractionManager {
   public static async storeInfraction(data: Prisma.InfractionsCreateArgs['data']): Promise<DatabaseInfraction> {
@@ -114,9 +114,9 @@ export default class InfractionManager {
     punishment: Exclude<InfractionType, 'Warn'>,
     reason: string
   ): string {
-    return `[${capitalize(PAST_TENSE_INFRACTIONS[punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS])} by ${
-      executor.user.username
-    } (${executor.id})] ${reason}`;
+    return `[${capitalize(
+      PAST_TENSE_INFRACTIONS[punishment.toLowerCase() as keyof typeof PAST_TENSE_INFRACTIONS]
+    )} by ${executor.user.username} (${executor.id})] ${reason}`;
   }
 
   public static async sendNotificationDM(data: {

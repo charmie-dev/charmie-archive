@@ -24,9 +24,9 @@ import YAML from 'yaml';
 import fs from 'fs';
 import ms from 'ms';
 
-import { CommandRoleOverride, GlobalConfig } from '../managers/config/schema';
+import { CommandRoleOverride, GlobalConfig } from '@managers/config/schema';
 import { COMMON_STAFF_PERMISSIONS, MODERATION_COMMANDS } from './constants';
-import { CommandCategory } from '../managers/commands/Command';
+import { CommandCategory } from '@managers/commands/Command';
 
 import Logger from './logger';
 import { Guilds as DatabaseGuild } from '@prisma/client';

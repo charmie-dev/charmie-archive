@@ -8,10 +8,10 @@ import {
   ChatInputCommandError,
   ChatInputCommandDenied
 } from './CommandHandlers';
-import { capitalize } from '../../utils';
+import { capitalize } from '@utils/index';
 
 import GuildCache from '../db/GuildCache';
-import Logger from '../../utils/logger';
+import Logger from '@utils/logger';
 
 export default class CommandManager {
   private static listeners: ListenerConfig[] = [

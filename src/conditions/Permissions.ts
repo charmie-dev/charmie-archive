@@ -1,20 +1,13 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Precondition } from '@sapphire/framework';
-import {
-  ChatInputCommandInteraction,
-  ContextMenuCommandInteraction,
-  GuildTextBasedChannel,
-  PermissionFlagsBits,
-  PermissionsBitField,
-  type Message
-} from 'discord.js';
+import { GuildTextBasedChannel, PermissionFlagsBits, PermissionsBitField, type Message } from 'discord.js';
 import { Prisma } from '@prisma/client';
 
-import { CommandChannelOverride, CommandRoleOverride } from '../managers/config/schema';
-import { CharmieMessageCommand, CommandCategory } from '../managers/commands/Command';
-import { DM_CHANNEL_PERMISSIONS, ERROR_MESSAGES, PRECONDITION_IDENTIFIERS } from '../utils/constants';
+import { CommandChannelOverride, CommandRoleOverride } from '@managers/config/schema';
+import { CharmieMessageCommand, CommandCategory } from '@managers/commands/Command';
+import { DM_CHANNEL_PERMISSIONS, ERROR_MESSAGES, PRECONDITION_IDENTIFIERS } from '@utils/constants';
 
-import GuildCache from '../managers/db/GuildCache';
+import GuildCache from '@managers/db/GuildCache';
 
 @ApplyOptions<Precondition.Options>({ position: 20 })
 export default class PermissionsPrecondition extends Precondition {

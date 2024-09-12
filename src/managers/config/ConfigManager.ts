@@ -2,10 +2,10 @@ import { fromZodError } from 'zod-validation-error';
 
 import fs from 'fs';
 
-import { readYamlFile } from '../../utils';
+import { readYamlFile } from '@utils/index';
 import { GlobalConfig, globalConfigSchema } from './schema';
 
-import Logger, { AnsiColor } from '../../utils/logger';
+import Logger, { AnsiColor } from '@utils/logger';
 /**
  * The config manager class.
  *

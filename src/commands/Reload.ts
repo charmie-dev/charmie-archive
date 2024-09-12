@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 
 import ms from 'ms';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Developer,

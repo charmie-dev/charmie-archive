@@ -17,8 +17,14 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "sourceRoot": "src",
     "inlineSources": true,
-    "sourceRoot": "/"
+
+    "paths": {
+      "@/*": ["./src/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@managers/*": ["./src/managers/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules", "tests", "prisma"]

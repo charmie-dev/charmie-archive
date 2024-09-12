@@ -6,7 +6,7 @@ import { Sentry } from '..';
 import { terminateDbConnection } from '.';
 
 import Logger, { AnsiColor } from './logger';
-import MessageCache from '../managers/db/MessageCache';
+import MessageCache from '@managers/db/MessageCache';
 
 /**
  * The class responsible for handling/managing cron utilities.

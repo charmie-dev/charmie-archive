@@ -1,7 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { reply } from '@sapphire/plugin-editable-commands';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
 
 /**
  * Gets the websocket heartbeat and roundtrip latency.

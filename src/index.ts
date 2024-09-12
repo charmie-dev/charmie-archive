@@ -7,14 +7,14 @@ import '@sapphire/framework';
 import * as SentryClient from '@sentry/node';
 import { container } from '@sapphire/framework';
 
-import { CharmieClient } from './utils/client';
-import { EXIT_EVENTS } from './utils/constants';
-import { ExtendedPrismaClient, ExtendedPrismaClientType } from './managers/db/ExtenedClient';
+import { CharmieClient } from '@utils/client';
+import { EXIT_EVENTS } from '@utils/constants';
+import { ExtendedPrismaClient, ExtendedPrismaClientType } from '@managers/db/ExtenedClient';
 
-import Logger, { AnsiColor } from './utils/logger';
-import CronUtils from './utils/cron';
-import ConfigManager from './managers/config/ConfigManager';
-import CommandManager from './managers/commands/CommandManager';
+import Logger, { AnsiColor } from '@utils/logger';
+import CronUtils from '@utils/cron';
+import ConfigManager from '@managers/config/ConfigManager';
+import CommandManager from '@managers/commands/CommandManager';
 
 /**
  * The client class, an extension of the {@link https://sapphirejs.dev/docs/Documentation/api-framework/classes/SapphireClient SapphireClient }.

@@ -2,8 +2,7 @@ import { Guilds as Guild } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import { Collection } from 'discord.js';
 
-import Logger, { AnsiColor } from '../../utils/logger';
-import CronUtils from '../../utils/cron';
+import CronUtils from '@utils/cron';
 import ConfigManager from '../config/ConfigManager';
 
 export default class GuildCache {

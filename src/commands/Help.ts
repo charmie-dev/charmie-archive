@@ -3,11 +3,11 @@ import { UserOrMemberMentionRegex } from '@sapphire/discord.js-utilities';
 import { reply } from '@sapphire/plugin-editable-commands';
 import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 
-import { CharmieCommand, CommandCategory } from '../managers/commands/Command';
-import { DEFAULT_EMBED_COLOR } from '../utils/constants';
-import { generateHelpFields } from '../utils';
+import { CharmieCommand, CommandCategory } from '@managers/commands/Command';
+import { DEFAULT_EMBED_COLOR } from '@utils/constants';
+import { generateHelpFields } from '@utils/index';
 
-import ConfigManager from '../managers/config/ConfigManager';
+import ConfigManager from '@managers/config/ConfigManager';
 
 @ApplyOptions<CharmieCommand.Options>({
   category: CommandCategory.Utility,
@@ -91,7 +91,12 @@ export default class Help extends CharmieCommand {
       .setColor(DEFAULT_EMBED_COLOR);
   }
 
-  private formatCommandEmbedFields(message: CharmieCommand.Message, embed: EmbedBuilder, command: CharmieCommand, prefix: string): EmbedBuilder {
+  private formatCommandEmbedFields(
+    message: CharmieCommand.Message,
+    embed: EmbedBuilder,
+    command: CharmieCommand,
+    prefix: string
+  ): EmbedBuilder {
     const { usage, aliases } = this._getUsageAndAliases(message, prefix, command);
 
     if (usage) embed.addFields({ name: 'Usage', value: usage, inline: true });
@@ -147,10 +152,10 @@ export default class Help extends CharmieCommand {
       } else if (Array.isArray(command.usage)) {
         usage = command.usage.map(usage => `\`${prefix}${command.name} ${usage}\``).join('\n');
       }
-        usage!.replaceAll(
-      `<@${this.container.client.user!.id}>`,
-      message.inGuild() ? `@${message.guild.members.me!.displayName}` : `@${this.container.client.user!.tag}`
-    );
+      usage!.replaceAll(
+        `<@${this.container.client.user!.id}>`,
+        message.inGuild() ? `@${message.guild.members.me!.displayName}` : `@${this.container.client.user!.tag}`
+      );
     }
 
     if (command.aliases.length > 0) aliases = command.aliases.map(a => `\`${a}\``).join(', ');
