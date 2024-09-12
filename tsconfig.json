@@ -14,10 +14,12 @@
     "skipLibCheck": true,
     "importHelpers": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "inlineSources": true,
     "sourceRoot": "/"
   },
+  "include": ["src"],
   "exclude": ["dist", "node_modules", "tests", "prisma"]
 }
