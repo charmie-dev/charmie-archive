@@ -1,27 +1,13 @@
 import { Message } from 'discord.js';
-import { container, Events } from '@sapphire/framework';
+import { container } from '@sapphire/framework';
 
-import {
-  MessageCommandError,
-  MessageCommandDenied,
-  MessageCommandParsed,
-  ChatInputCommandError,
-  ChatInputCommandDenied
-} from './CommandHandlers';
-import { capitalize } from '@utils/index';
+import { ListenerPieces } from './listeners';
+import { ArgumentPieces } from './arguments';
+import { PreconditionPieces } from './preconditions';
 
 import GuildCache from '../db/GuildCache';
-import Logger from '@utils/logger';
 
 export default class CommandManager {
-  private static listeners: ListenerConfig[] = [
-    { name: Events.MessageCommandError, piece: MessageCommandError },
-    { name: Events.MessageCommandDenied, piece: MessageCommandDenied },
-    { name: 'CorePreMessageParser', piece: MessageCommandParsed },
-    { name: Events.ChatInputCommandError, piece: ChatInputCommandError },
-    { name: Events.ChatInputCommandDenied, piece: ChatInputCommandDenied }
-  ];
-
   public static checkRawMessage(message: Message) {
     if (!message.inGuild() || message.author.bot || message.webhookId || !message.content) return;
     return CommandManager.parseRawMessage(message);
@@ -56,19 +42,45 @@ export default class CommandManager {
     if (!command) return;
   }
 
-  public static async mountListeners() {
-    const mountPromises = this.listeners.map(listener => this.mountListener(listener));
+  public static async loadListeners() {
+    const mountPromises = ListenerPieces.map(listener => this.loadListener(listener));
     await Promise.all(mountPromises);
   }
 
-  private static async mountListener({ name, piece }: ListenerConfig) {
+  private static async loadListener({ name, piece }: ListenerConfig) {
     await container.stores.loadPiece({ store: 'listeners', name, piece });
-    const capitalizedName = name === 'CorePreMessageParser' ? Events.PreMessageParsed : name;
-    Logger.info(`Mounted command listener "${capitalize(capitalizedName)}"`);
+  }
+
+  public static async loadPreconditions() {
+    const mountPromises = PreconditionPieces.map(precondition => this.loadPrecondition(precondition));
+    await Promise.all(mountPromises);
+  }
+
+  private static async loadPrecondition({ name, piece }: PreconditionConfig) {
+    await container.stores.loadPiece({ store: 'preconditions', name, piece });
+  }
+
+  public static async loadArguments() {
+    const mountPromises = ArgumentPieces.map(argument => this.loadArgument(argument));
+    await Promise.all(mountPromises);
+  }
+
+  private static async loadArgument({ name, piece }: ArgumentConfig) {
+    await container.stores.loadPiece({ store: 'arguments', name: name.toLowerCase(), piece });
   }
 }
 
-interface ListenerConfig {
+export interface ListenerConfig {
+  name: string;
+  piece: any;
+}
+
+export interface PreconditionConfig {
+  name: string;
+  piece: any;
+}
+
+export interface ArgumentConfig {
   name: string;
   piece: any;
 }

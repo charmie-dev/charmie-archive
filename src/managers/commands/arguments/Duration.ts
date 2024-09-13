@@ -5,6 +5,10 @@ import ms from 'ms';
 import { parseDuration } from '@utils/index';
 
 export class DurationArgument extends Argument<number | string | null> {
+  public constructor(context: Argument.LoaderContext) {
+    super(context, { name: 'duration' });
+  }
+
   public run(parameter: string, context: Argument.Context) {
     if (['permanent', 'perm', 'p', 'infinite', 'inf', 'never'].includes(parameter)) return this.ok('permanent');
     const duration = parseDuration(parameter);

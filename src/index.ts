@@ -67,13 +67,15 @@ async function main() {
 
   ConfigManager.cacheGlobalConfig();
 
-  // Load virtual pieces
+  // Load command manager stuff
 
-  await CommandManager.mountListeners();
+  await CommandManager.loadListeners();
+  await CommandManager.loadPreconditions();
+  await CommandManager.loadArguments();
 
   // Initialize sentry
 
-  await Sentry.init({
+  Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV,
     profilesSampleRate: 1,

@@ -1,130 +1,14 @@
-import {
-  ChatInputCommandDeniedPayload,
-  ChatInputCommandErrorPayload,
-  Events,
-  Identifiers,
-  Listener,
-  MessageCommandDeniedPayload,
-  MessageCommandErrorPayload,
-  Result,
-  UserError
-} from '@sapphire/framework';
+import { Events, Listener, Result } from '@sapphire/framework';
+import { Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import { Stopwatch } from '@sapphire/stopwatch';
 import { isDMChannel } from '@sapphire/discord.js-utilities';
-import { ChatInputCommandInteraction, Colors, Message, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
-import { PRECONDITION_IDENTIFIERS } from '@utils/constants';
-import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from './Command';
-import { sendOrReply } from '@utils/index';
-import { Sentry } from '../../index';
+import { CharmieCommandGuildRunContext, CharmieCommandRunContext, CharmieMessageCommand } from '../Command';
 
-import Logger from '@utils/logger';
-import GuildCache from '../db/GuildCache';
-import CommandManager from './CommandManager';
+import CommandManager from '../CommandManager';
+import GuildCache from '../../db/GuildCache';
 
-export class MessageCommandError extends Listener<typeof Events.MessageCommandError> {
-  public constructor(context: Listener.LoaderContext) {
-    super(context, { event: Events.MessageCommandError });
-  }
-
-  public async run(uError: UserError, { message }: MessageCommandErrorPayload) {
-    if (typeof uError !== 'string') {
-      const sentryId = Sentry.captureException(uError);
-      Logger.error(`[${sentryId}] Message command error:`, uError);
-      return MessageCommandError.throw(
-        message,
-        `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`,
-        true
-      );
-    }
-
-    if (message.inGuild()) {
-      const { msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay } = await GuildCache.get(message.guildId);
-      return MessageCommandError.throw(message, uError, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
-    }
-
-    return MessageCommandError.throw(message, uError);
-  }
-
-  /**
-   * Replies to the message with an error embed.
-   *
-   * @param message The message (or interaction) to reply to (will fallback to sending if the message can't be replied to)
-   * @param error The error message to reply with
-   * @param preserve Whether to preserve the message or not
-   * @param delay The delay before deleting the message in milliseconds
-   *
-   * @returns void
-   */
-
-  public static async throw(
-    message: Message | ChatInputCommandInteraction,
-    error: string,
-    preserve: boolean = false,
-    delay: number = 7500
-  ): Promise<void> {
-    if (message instanceof Message) {
-      const errorMsg = await sendOrReply(message, {
-        embeds: [{ description: error, color: Colors.Red }]
-      });
-
-      if (!preserve) {
-        setTimeout(() => {
-          errorMsg.delete().catch(() => {});
-          message.delete().catch(() => {});
-        }, delay);
-      }
-    } else if (message instanceof ChatInputCommandInteraction) {
-      if (!message.deferred && !message.replied)
-        await message.reply({
-          embeds: [{ description: error, color: Colors.Red }],
-          ephemeral: true
-        });
-      else
-        await message.editReply({
-          embeds: [{ description: error, color: Colors.Red }]
-        });
-    }
-  }
-}
-
-export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
-  public constructor(context: Listener.LoaderContext) {
-    super(context, { event: Events.MessageCommandDenied });
-  }
-
-  public async run({ message: eMsg, identifier }: UserError, { message }: MessageCommandDeniedPayload) {
-    if (identifier === PRECONDITION_IDENTIFIERS.Silent || identifier === Identifiers.PreconditionGuildOnly) return;
-
-    let respond = true;
-    let preserve = false;
-
-    if (message.inGuild()) {
-      const {
-        msgCmdsPreserveErrors,
-        msgCmdsErrorDeleteDelay,
-        msgCmdsRespondIfDisabled,
-        msgCmdsRespondIfNoPerms,
-        msgCmdsRespondIfNotAllowed
-      } = await GuildCache.get(message.guildId);
-
-      respond =
-        identifier === PRECONDITION_IDENTIFIERS.CommandDisabled
-          ? msgCmdsRespondIfDisabled
-          : identifier === PRECONDITION_IDENTIFIERS.CommandDisabledInChannel
-            ? msgCmdsRespondIfNotAllowed
-            : msgCmdsRespondIfNoPerms;
-
-      if (!respond) return message.delete().catch(() => {});
-      return MessageCommandError.throw(message, eMsg, msgCmdsPreserveErrors, msgCmdsErrorDeleteDelay);
-    }
-
-    preserve = identifier === Identifiers.PreconditionClientPermissions;
-    return MessageCommandError.throw(message, eMsg, preserve);
-  }
-}
-
-export class MessageCommandParsed extends Listener<typeof Events.PreMessageParsed> {
+export class MessageCommandParser extends Listener<typeof Events.PreMessageParsed> {
   private readonly requiredPermissions = new PermissionsBitField([
     PermissionFlagsBits.ViewChannel,
     PermissionFlagsBits.SendMessages
@@ -309,34 +193,5 @@ export class MessageCommandParsed extends Listener<typeof Events.PreMessageParse
 
   private getCommandPrefix(content: string, prefix: string | RegExp): string {
     return typeof prefix === 'string' ? prefix : prefix.exec(content)![0];
-  }
-}
-
-export class ChatInputCommandError extends Listener<typeof Events.ChatInputCommandError> {
-  public constructor(context: Listener.LoaderContext) {
-    super(context, { event: Events.ChatInputCommandError });
-  }
-
-  public async run(error: UserError, { interaction }: ChatInputCommandErrorPayload) {
-    if (typeof error !== 'string') {
-      const sentryId = Sentry.captureException(error);
-      Logger.error(`[${sentryId}] Chat input command error:`, error);
-      return MessageCommandError.throw(
-        interaction,
-        `An error occured while running this command, please include this ID when reporting the bug: \`${sentryId}\`.`
-      );
-    }
-
-    return MessageCommandError.throw(interaction, error);
-  }
-}
-
-export class ChatInputCommandDenied extends Listener<typeof Events.ChatInputCommandDenied> {
-  public constructor(context: Listener.LoaderContext) {
-    super(context, { event: Events.ChatInputCommandDenied });
-  }
-
-  public async run({ message }: UserError, { interaction }: ChatInputCommandDeniedPayload) {
-    return MessageCommandError.throw(interaction, message);
   }
 }

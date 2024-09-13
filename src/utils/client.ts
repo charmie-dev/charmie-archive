@@ -105,13 +105,6 @@ export class CharmieClient extends SapphireClient {
     this.stores.get('interaction-handlers').registerPath(join(this.rootData.root, 'interactions'));
 
     /**
-     * We register a store for preconditions under the name "conditions" for ease of access.
-     *
-     * This doesn't make much sense as they run before the command is executed... but it's fine
-     */
-    this.stores.get('preconditions').registerPath(join(this.rootData.root, 'conditions'));
-
-    /**
      * We register a second store for listeners that handle client events.
      *
      * E.g {@link Events.ClientReady}, which runs when the client has fully logged in

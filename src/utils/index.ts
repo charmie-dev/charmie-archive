@@ -142,57 +142,6 @@ export async function terminateDbConnection(): Promise<void> {
 }
 
 /**
- * Throws an error in the form of an embed.
- *
- * @param message The message, or interaction to send the error to
- * @param error The error message
- * @param preserve Whether to preserve the error message (cannot be applied to interactions)
- * @param delay How long  to wait before deleting the error message (cannot be applied to interactions)
- *
- * @returns unkown
- */
-
-export async function embeddedError(
-  message:
-    | Message
-    | ChatInputCommandInteraction
-    | ButtonInteraction
-    | ContextMenuCommandInteraction
-    | ModalSubmitInteraction,
-  error: string,
-  preserve: boolean = false,
-  delay: number = 7500
-): Promise<unknown> {
-  if (message instanceof Message) {
-    const errorMsg = await sendOrReply(message, {
-      embeds: [{ description: error, color: Colors.Red }]
-    });
-
-    if (!preserve) {
-      setTimeout(() => {
-        errorMsg.delete().catch(() => {});
-        message.delete().catch(() => {});
-      }, delay);
-    }
-  } else if (
-    message instanceof ChatInputCommandInteraction ||
-    message instanceof ModalSubmitInteraction ||
-    message instanceof ButtonInteraction ||
-    message instanceof ContextMenuCommandInteraction
-  ) {
-    if (!message.deferred && !message.replied)
-      return message.reply({
-        embeds: [{ description: `${error}`, color: Colors.Red }],
-        ephemeral: true
-      });
-    else
-      return message.editReply({
-        embeds: [{ description: `${error}`, color: Colors.Red }]
-      });
-  }
-}
-
-/**
  * Attempts to reply to a message, or send a message if the message is not available to be replied to.
  *
  * @param message The message to reply to
@@ -201,7 +150,7 @@ export async function embeddedError(
  * @returns {@link Message} The message that was sent
  */
 
-export async function sendOrReply(message: Message, content: string | MessageCreateOptions): Promise<Message> {
+export async function tryToReply(message: Message, content: string | MessageCreateOptions): Promise<Message> {
   return reply(message, content).catch(() => {
     return send(message, content);
   });

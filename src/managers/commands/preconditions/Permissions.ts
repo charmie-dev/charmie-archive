@@ -1,4 +1,3 @@
-import { ApplyOptions } from '@sapphire/decorators';
 import { Precondition } from '@sapphire/framework';
 import { GuildTextBasedChannel, PermissionFlagsBits, PermissionsBitField, type Message } from 'discord.js';
 import { Prisma } from '@prisma/client';
@@ -9,8 +8,11 @@ import { DM_CHANNEL_PERMISSIONS, ERROR_MESSAGES, PRECONDITION_IDENTIFIERS } from
 
 import GuildCache from '@managers/db/GuildCache';
 
-@ApplyOptions<Precondition.Options>({ position: 20 })
-export default class PermissionsPrecondition extends Precondition {
+export class PermissionsPrecondition extends Precondition {
+  private constructor(context: Precondition.LoaderContext) {
+    super(context, { position: 20 });
+  }
+
   public async messageRun(message: Message, command: CharmieMessageCommand) {
     if (this.shouldSkipChecks(message, command)) return this.ok();
 

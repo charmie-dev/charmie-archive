@@ -5,7 +5,7 @@ import { PRECONDITION_IDENTIFIERS } from '@utils/constants';
 
 import ConfigManager from '@managers/config/ConfigManager';
 
-export default class GuardedPrecondition extends Precondition {
+export class GuardedPrecondition extends Precondition {
   public async messageRun(message: Message) {
     return this.check(message.author.id);
   }

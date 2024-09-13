@@ -1,15 +1,17 @@
 import { Events, Listener } from '@sapphire/framework';
-import { ApplyOptions } from '@sapphire/decorators';
 
 import Logger, { AnsiColor } from '@utils/logger';
 
 import MessageCache from '@managers/db/MessageCache';
 import GuildCache from '@managers/db/GuildCache';
 
-@ApplyOptions<Listener.Options>({ event: Events.ClientReady })
-export default class Ready extends Listener<typeof Events.ClientReady> {
+export class Ready extends Listener<typeof Events.ClientReady> {
+  private constructor(context: Listener.LoaderContext) {
+    super(context, { event: Events.ClientReady, once: true });
+  }
+
   public async run() {
-    Logger.log('READY', `Successfully logged in as ${this.container.client.user!.tag}`, {
+    Logger.log('CLIENT', `Successfully logged in as ${this.container.client.user!.tag}.`, {
       color: AnsiColor.Green,
       full: true
     });
