@@ -1,31 +1,35 @@
 {
   "compilerOptions": {
-    "pretty": true,
-    "module": "CommonJS",
-    "target": "ESNext",
-    "lib": ["ESNext"],
-    "types": ["bun-types"],
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "alwaysStrict": true,
-    "removeComments": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "importHelpers": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "sourceRoot": "src",
-    "inlineSources": true,
-
-    "paths": {
-      "@/*": ["./src/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@managers/*": ["./src/managers/*"]
-    }
+      "strict": true,
+      "pretty": true,
+      "removeComments": true,
+      "lib": ["ESNext"],
+      "types": ["bun-types"],
+      "target": "ES2020",
+      "module": "Node16",
+      "moduleResolution": "NodeNext",
+      "rootDir": "src",
+      "outDir": "dist",
+      "tsBuildInfoFile": "dist/.tsbuildinfo",
+      "composite": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "alwaysStrict": true,
+      "preserveConstEnums": true,
+      "resolveJsonModule": true,
+      "importHelpers": true,
+      "declaration": true,
+      "declarationMap": true,
+      "downlevelIteration": true,
+      "skipLibCheck": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "paths": {
+          "@/*": ["./src/*"],
+          "@utils/*": ["./src/utils/*"],
+          "@managers/*": ["./src/managers/*"]
+        }
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules", "tests", "prisma"]
+  "exclude": ["node_modules", "dist", "prisma", "tests"]
 }

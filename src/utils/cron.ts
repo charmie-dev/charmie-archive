@@ -1,5 +1,4 @@
-import { CronJobParams } from '@sentry/node/build/types/cron/cron';
-import { CronJob } from 'cron';
+import { CronJob, CronJobParams } from 'cron';
 
 import { DEFAULT_TIMEZONE } from './constants';
 import { Sentry } from '..';
