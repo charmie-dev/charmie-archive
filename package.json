@@ -10,7 +10,7 @@
     "start:pm2": "pm2 start process.json",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
-    "project:format": "prettier --write src/**/*.ts"
+    "format": "prettier --write src/**/*.ts"
   },
   "repository": {
     "type": "git",

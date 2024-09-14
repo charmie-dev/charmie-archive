@@ -15,8 +15,8 @@ export class EnabledPrecondition extends Precondition {
     return command.category === CommandCategory.Developer
       ? this.ok()
       : message.inGuild()
-      ? this.check(message.guildId, command)
-      : this.ok();
+        ? this.check(message.guildId, command)
+        : this.ok();
   }
 
   // Handled by discord's permission system
