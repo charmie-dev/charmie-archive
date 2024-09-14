@@ -6,11 +6,11 @@
   "main": "dist/index.js",
   "scripts": {
     "compile": "tsc && tsc-alias",
-    "start": "bun run dist/index.js",
+    "start": "bun dist/index.js",
     "start:pm2": "pm2 start process.json",
-    "db:push": "bunx prisma db push",
-    "db:generate": "bunx prisma generate",
-    "project:format": "bunx prettier --write src/**/*.ts"
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "project:format": "prettier --write src/**/*.ts"
   },
   "repository": {
     "type": "git",

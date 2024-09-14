@@ -4,14 +4,14 @@ Moderation & Utility discord bot designed for speed and reliability.
 
 # Requirements
 
-- [Bun Runtime](https://bun.sh/)
+- [Bun Runtime](https://bun.sh/) / [NodeJS Runtime](https://nodejs.org/)
 - [Typescript](https://www.typescriptlang.org/)
 - [PostgreSQL Server](https://www.postgresql.org/)
 - [Sentry Project](https://sentry.io/welcome/)
 
-An `.env` file is required to run the bot. For information on what values need to be filled out you can view an official example [here](https://github.com/charmie-dev/charmie/blob/main/.env.example).
+A `.env` file is required to run the bot. For information on what values need to be filled out you can view an official example [here](https://github.com/charmie-dev/charmie/blob/main/.env.example).
 
-Additionally a file with the name `charmie.cfg.yml` must be present in the root directory of this project, and must contain the following options:
+Additionally, a file with the name `charmie.cfg.yml` must be present in the root directory of this project, and must contain the following options:
 
 ```yaml
 database:
@@ -32,10 +32,18 @@ developers: ['{dev id}', '{dev id 2}'] # An array of user IDs permitted to run c
 
 Ensure that your `.env` and `charmie.cfg.yml` files are present and properly configured. One way to validate the global configuration is to levrage bun's test sytem with `bun test`.
 
+In case you are using NodeJS, you have to slightly modify the syntax of these commands:
+
+- `bunx ...` -> `npx ...`
+- `bun install` -> `npm install`
+- `bun db:push` -> `npm run db:push`
+- `bun db:generate` -> `npm run db:generate`
+- `bun start` | `bun .` -> `node dist/index.js` | `node .`
+
 ## Initially
 
 - All of the following commands should be run in the root directory of this project.
-- Additionally, you can configure sentry sourcemaps to be uploaded to sentry.io (`bunx @sentry/wizard@latest -i sourcemaps`).
+- You can configure sentry sourcemaps to be uploaded to https://sentry.io (`bunx @sentry/wizard@latest -i sourcemaps`).
 
 1. First and foremost, the dependencies required for this project must be installed. You can do this with a package manager of your choice, but for this example we'll be using [bun](https://bun.sh/). Run `bun install` and wait for the installation to finish.
 
