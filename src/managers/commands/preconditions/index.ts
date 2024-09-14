@@ -1,10 +1,10 @@
-import { PreconditionConfig } from '../CommandManager';
+import { PieceConfig } from '../CommandManager';
 import { EnabledPrecondition } from './Enabled';
 import { GuardedPrecondition } from './Guarded';
 import { PermissionsPrecondition } from './Permissions';
 
-export const PreconditionPieces: PreconditionConfig[] = [
-  { name: 'Guarded', piece: GuardedPrecondition },
-  { name: 'Enabled', piece: EnabledPrecondition },
-  { name: 'Permissions', piece: PermissionsPrecondition }
+export const PreconditionPieces: PieceConfig[] = [
+  { store: 'preconditions', name: 'Guarded', piece: GuardedPrecondition },
+  { store: 'preconditions', name: 'Enabled', piece: EnabledPrecondition },
+  { store: 'preconditions', name: 'Permissions', piece: PermissionsPrecondition }
 ];

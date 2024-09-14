@@ -67,11 +67,9 @@ async function main() {
 
   ConfigManager.cacheGlobalConfig();
 
-  // Load command manager stuff
+  // Mount the command manager
 
-  await CommandManager.loadListeners();
-  await CommandManager.loadPreconditions();
-  await CommandManager.loadArguments();
+  await CommandManager.mount();
 
   // Initialize sentry
 
@@ -109,7 +107,7 @@ async function main() {
   await client.login(process.env.BOT_TOKEN);
 }
 
-main().catch(error => {
+void main().catch(error => {
   Logger.error(error);
 });
 

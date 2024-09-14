@@ -42,45 +42,21 @@ export default class CommandManager {
     if (!command) return;
   }
 
-  public static async loadListeners() {
-    const mountPromises = ListenerPieces.map(listener => this.loadListener(listener));
-    await Promise.all(mountPromises);
+  public static async mount() {
+    const listenerPromises = ListenerPieces.map(listener => this.loadPiece(listener));
+    const preconditionPromises = PreconditionPieces.map(precondition => this.loadPiece(precondition));
+    const argumentPromises = ArgumentPieces.map(argument => this.loadPiece(argument));
+
+    await Promise.all([...listenerPromises, ...preconditionPromises, ...argumentPromises]);
   }
 
-  private static async loadListener({ name, piece }: ListenerConfig) {
-    await container.stores.loadPiece({ store: 'listeners', name, piece });
-  }
-
-  public static async loadPreconditions() {
-    const mountPromises = PreconditionPieces.map(precondition => this.loadPrecondition(precondition));
-    await Promise.all(mountPromises);
-  }
-
-  private static async loadPrecondition({ name, piece }: PreconditionConfig) {
-    await container.stores.loadPiece({ store: 'preconditions', name, piece });
-  }
-
-  public static async loadArguments() {
-    const mountPromises = ArgumentPieces.map(argument => this.loadArgument(argument));
-    await Promise.all(mountPromises);
-  }
-
-  private static async loadArgument({ name, piece }: ArgumentConfig) {
-    await container.stores.loadPiece({ store: 'arguments', name: name.toLowerCase(), piece });
+  public static async loadPiece({ store, name, piece }: PieceConfig) {
+    await container.stores.loadPiece({ store, name: store === 'arguments' ? name.toLowerCase() : name, piece });
   }
 }
 
-export interface ListenerConfig {
-  name: string;
-  piece: any;
-}
-
-export interface PreconditionConfig {
-  name: string;
-  piece: any;
-}
-
-export interface ArgumentConfig {
+export interface PieceConfig {
+  store: 'listeners' | 'preconditions' | 'arguments';
   name: string;
   piece: any;
 }

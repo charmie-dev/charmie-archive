@@ -1,4 +1,4 @@
-import { ArgumentConfig } from '../CommandManager';
+import { PieceConfig } from '../CommandManager';
 import { DurationArgument } from './Duration';
 
-export const ArgumentPieces: ArgumentConfig[] = [{ name: 'Duration', piece: DurationArgument }];
+export const ArgumentPieces: PieceConfig[] = [{ store: 'arguments', name: 'Duration', piece: DurationArgument }];
