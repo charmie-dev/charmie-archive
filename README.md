@@ -1,3 +1,10 @@
+Helloes
+
+This is the 'Alpha' version of my discord bot, Charmie, that was never finished and was scrapped because I wanted to redo the whole thing!
+If you're looking at self hosting this thing, please don't, you're better off using Dyno.
+
+If you're an experienced software dev I'm so sorry for the code you'll find here, I promise I've made huge improvements in the new version.
+
 # Charmie
 
 Moderation & Utility discord bot designed for speed and reliability.
